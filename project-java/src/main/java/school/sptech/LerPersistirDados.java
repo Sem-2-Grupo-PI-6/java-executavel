@@ -70,9 +70,8 @@ public class LerPersistirDados {
                         jdbcTemplate.update(
                                 "INSERT INTO logInflacao (idInflacao, descricao) VALUES (?, ?)",
                                 inflacao.getFirst().getId(),
-                                "Registro de inflação inserido"
+                                "Od registros "+ taxaApuracao +" e "+ dataApuracao +" foram inseridos"
                         );
-
                         count++;
                     } catch (Exception e) {
                         System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
