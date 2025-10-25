@@ -3,6 +3,7 @@ package school.sptech;
 
 import com.opencsv.CSVReader;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -18,6 +19,7 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class LerPersistirDados {
 
@@ -62,10 +64,16 @@ public class LerPersistirDados {
                                 dataApuracao
                         );
 
-                        count++;
-                        System.out.printf("[%s] 💾 Inserido: Data=%s | Taxa=%.2f%%%n",
-                                timestamp, dataApuracao, taxaApuracao);
+                        List<Inflacao> inflacao = jdbcTemplate
+                                .query("SELECT * FROM inflacao ORDER BY id DESC LIMIT 1;", new BeanPropertyRowMapper<>(Inflacao.class));
 
+                        jdbcTemplate.update(
+                                "INSERT INTO logInflacao (idInflacao, descricao) VALUES (?, ?)",
+                                inflacao.getFirst().getId(),
+                                "Registro de inflação inserido"
+                        );
+
+                        count++;
                     } catch (Exception e) {
                         System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
                     }
@@ -85,8 +93,7 @@ public class LerPersistirDados {
     }
 
     private InputStream baixarArquivo(String key) throws IOException {
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        System.out.println("[" + timestamp + "] 🔹 Baixando do S3: " + bucketName + "/" + key);
+        System.out.println(" Baixando do S3: " + bucketName + "/" + key);
 
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(bucketName)
@@ -95,10 +102,10 @@ public class LerPersistirDados {
 
         try {
             ResponseInputStream<GetObjectResponse> response = s3Client.getObject(request);
-            System.out.println("[" + timestamp + "]  Arquivo CSV carregado do S3 com sucesso!");
+            System.out.println("Arquivo CSV carregado do S3 com sucesso!");
             return response;
         } catch (S3Exception e) {
-            System.err.println("[" + timestamp + "]  Erro ao baixar do S3: " + e.awsErrorDetails().errorMessage());
+            System.err.println("Erro ao baixar do S3: " + e.awsErrorDetails().errorMessage());
             throw new IOException("Falha ao obter InputStream do S3", e);
         }
     }
