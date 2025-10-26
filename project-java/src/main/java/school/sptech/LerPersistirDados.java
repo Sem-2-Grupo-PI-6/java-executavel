@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -270,19 +271,24 @@ public void inserirDadosPib(String key) {
                         Double densidadeDemografico = Double.parseDouble(linha[8].replace(",", "."));
 
 
-                        List<String> zonaLeste = List.of("aricanduva", "são mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes");
-                        List<String> zonaSul   = List.of("capão redondo", "campo limpo", "jardim ângela", "morumbi", "santo amaro", "interlagos");
-                        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do ó", "jaçanã", "brasilândia");
-                        List<String> zonaOeste = List.of("pinheiros", "lapa", "butantã", "barra funda", "perdizes", "vila leopoldina");
+                        municipio = municipio.trim().toLowerCase();
+                        municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
+                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+                        List<String> zonaLeste = List.of("aricanduva", "sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes");
+                        List<String> zonaSul   = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos");
+                        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia");
+                        List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina");
+
 
                         Integer idZona = 0;
-                        if(zonaLeste.contains(municipio.toLowerCase())){
+                        if(zonaLeste.contains(municipio)){
                             idZona = 1;
-                        }else if(zonaSul.contains(municipio.toLowerCase())){
+                        }else if(zonaSul.contains(municipio)){
                             idZona = 2;
-                        } else if (zonaNorte.contains(municipio.toLowerCase())) {
+                        } else if (zonaNorte.contains(municipio)) {
                             idZona = 3;
-                        }else if(zonaOeste.contains(municipio.toLowerCase())){
+                        }else if(zonaOeste.contains(municipio)){
                             idZona = 4;
                         }
 
