@@ -19,14 +19,7 @@ public class Main {
         );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        for (String csv : arquivosCsv) {
-            if(csv == "inflacao.csv"){
-                persistirDados.inserirDadosInflacao("inflacao.csv");
-                System.out.println("Chamando o metodo para inserir os dados da inflacao");
-            } else if (csv == "selic.csv") {
-                persistirDados.inserirDadosSelic("selic.csv");
-            }
-        }
+        persistirDados.inserirDadosSelic("selic.csv");
 
     }
 }
