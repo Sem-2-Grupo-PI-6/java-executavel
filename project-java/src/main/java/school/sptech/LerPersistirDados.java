@@ -162,7 +162,7 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                     String dataApuracao = linha[0];
                     String dataApuracaoTradada = dataApuracao.split(" ")[0];
 
-                    String valor = linha[1].replace(",", ".");
+                    String valor = linha[1].replace(",", "");
                     Double valorPib = Double.parseDouble(valor);
 
                     System.out.println("Após tratamento: Data=" + dataApuracaoTradada + " | Valor PIB=" + valorPib);
@@ -181,7 +181,7 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                     jdbcTemplate.update(
                         "INSERT INTO logPibConstrucaoCivil (idPibConstrucaoCivil, descricao) VALUES (?, ?)",
                         pib.getFirst().getId(),
-                        "Registro " + valorPib + " e " + dataApuracao + " inseridos com sucesso"
+                        "Registro " + valorPib + " e " + dataApuracaoTradada + " inseridos com sucesso"
                     );
 
                     count++;
