@@ -14,12 +14,12 @@ public class Main {
         List<String> arquivosCsv = List.of(
                 "inflacao.csv",
                 "selic.csv",
-                "populacao.csv",
+                "populacao2.csv",
                 "ipeaData_PIB_ConstrucaoCivil.csv"
         );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosPibConstrucaoCivil("ipeaData_PIB_ConstrucaoCivil.csv");
+        persistirDados.inserirDadosPopulacao("populacao.csv");
 
     }
 }

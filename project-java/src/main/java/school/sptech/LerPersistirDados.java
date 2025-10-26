@@ -245,66 +245,81 @@ public void inserirDadosPib(String key) {
     }
 }
 
-public void inserirDadosPopulacao(String key) {
-    String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-    System.out.println("[" + timestamp + "] ⏳ Iniciando leitura do arquivo CSV: " + key);
+    public void inserirDadosPopulacao(String key) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        System.out.println("[" + timestamp + "] ⏳ Iniciando leitura do arquivo CSV: " + key);
 
-    try (InputStream inputStream = baixarArquivo(key);
-         InputStreamReader isr = new InputStreamReader(inputStream);
-         CSVReader csvReader = new CSVReader(isr)) {
+        try (InputStream inputStream = baixarArquivo(key);
+             InputStreamReader isr = new InputStreamReader(inputStream);
+             CSVReader csvReader = new CSVReader(isr)) {
 
-        String[] linha;
-        int count = 0;
-        while ((linha = csvReader.readNext()) != null) {
-            // Esperado: ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona
-            if (linha.length >= 10) {
-                try {
-                    String ano = linha[0];
-                    String codigoIbge = linha[1];
-                    String municipio = linha[2];
-                    Integer qtdPopulacao = Integer.parseInt(linha[3]);
-                    Integer homens = Integer.parseInt(linha[4]);
-                    Integer mulheres = Integer.parseInt(linha[5]);
-                    Double razaoSexo = Double.parseDouble(linha[6].replace(",", "."));
-                    Double idadeMedia = Double.parseDouble(linha[7].replace(",", "."));
-                    Double densidadeDemografico = Double.parseDouble(linha[8].replace(",", "."));
-                    Integer idZona = Integer.parseInt(linha[9]);
+            String[] linha;
+            int count = 0;
+            while ((linha = csvReader.readNext()) != null) {
+                // Esperado: ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona
+                if (linha.length >= 10) {
+                    try {
+                        String ano = linha[0];
+                        String codigoIbge = linha[1];
+                        String municipio = linha[2];
+                        Integer qtdPopulacao = Integer.parseInt(linha[3]);
+                        Integer homens = Integer.parseInt(linha[4]);
+                        Integer mulheres = Integer.parseInt(linha[5]);
+                        Double razaoSexo = Double.parseDouble(linha[6].replace(",", "."));
+                        Double idadeMedia = Double.parseDouble(linha[7].replace(",", "."));
+                        Double densidadeDemografico = Double.parseDouble(linha[8].replace(",", "."));
 
-                    jdbcTemplate.update(
-                        "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                        razaoSexo, idadeMedia, densidadeDemografico, idZona
-                    );
+                        List<String> zonaLeste = List.of("Aricanduva", "São Mateus", "Itaquera", "Penha", "Vila Prudente", "Cidade Tiradentes");
+                        List<String> zonaSul = List.of("Capão Redondo", "Campo Limpo", "Jardim Ângela", "Morumbi", "Santo Amaro", "Interlagos");
+                        List<String> zonaNorte = List.of("Santana", "Tucuruvi", "Casa Verde", "Freguesia do Ó", "Jaçanã", "Brasilândia");
+                        List<String> zonaOeste = List.of("Pinheiros", "Lapa", "Butantã", "Barra Funda", "Perdizes", "Vila Leopoldina");
+                        int idZona = 0;
+                        if(zonaLeste.contains(municipio)){
+                            idZona = 1;
+                        }else if(zonaSul.contains(municipio)){
+                            idZona = 2;
+                        } else if (zonaNorte.contains(municipio)) {
+                            idZona = 3;
+                        }else if(zonaOeste.contains(municipio)){
+                            idZona = 4;
+                        }
+                        
+                        jdbcTemplate.update(
+                                "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) " +
+                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
+                                razaoSexo, idadeMedia, densidadeDemografico, idZona
+                        );
 
-                    List<Populacao> pop = jdbcTemplate.query(
-                        "SELECT * FROM populacao ORDER BY id DESC LIMIT 1",
-                        new BeanPropertyRowMapper<>(Populacao.class)
-                    );
+                        List<Populacao> pop = jdbcTemplate.query(
+                                "SELECT * FROM populacao ORDER BY id DESC LIMIT 1",
+                                new BeanPropertyRowMapper<>(Populacao.class)
+                        );
 
-                    jdbcTemplate.update(
-                        "INSERT INTO logPopulacao (idPopulacao, descricao) VALUES (?, ?)",
-                        pop.getFirst().getId(),
-                        "Registro de população (" + municipio + ") inserido com sucesso."
-                    );
+                        jdbcTemplate.update(
+                                "INSERT INTO logPopulacao (idPopulacao, descricao) VALUES (?, ?)",
+                                pop.get(0).getId(),
+                                "Registro de população (" + municipio + ") inserido com sucesso."
+                        );
 
-                    count++;
-                } catch (Exception e) {
-                    System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
+                        count++;
+                    } catch (Exception e) {
+                        System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
+                    }
                 }
             }
+
+            System.out.println("[" + timestamp + "] Inserção de " + count + " registros de população concluída!");
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException("[" + timestamp + "]  Erro no banco de dados: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("[" + timestamp + "]  Erro de I/O ao processar arquivo do S3: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("[" + timestamp + "]  Erro inesperado: " + e.getMessage(), e);
         }
-
-        System.out.println("[" + timestamp + "] Inserção de " + count + " registros de população concluída!");
-
-    } catch (DataAccessException e) {
-        throw new RuntimeException("[" + timestamp + "]  Erro no banco de dados: " + e.getMessage(), e);
-    } catch (IOException e) {
-        throw new RuntimeException("[" + timestamp + "]  Erro de I/O ao processar arquivo do S3: " + e.getMessage(), e);
-    } catch (Exception e) {
-        throw new RuntimeException("[" + timestamp + "]  Erro inesperado: " + e.getMessage(), e);
     }
-}
+
 
 public void inserirDadosZona(String key) {
     String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
