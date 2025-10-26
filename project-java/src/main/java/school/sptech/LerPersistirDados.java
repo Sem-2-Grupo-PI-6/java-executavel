@@ -159,11 +159,18 @@ public void inserirDadosPibConstrucaoCivil(String key) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
                 try {
-                    System.out.println("teste");
+
+                    String dataApuracao = linha[0].split(" ")[0];
+
+                    String valor = linha[1].replace(",", "");
+                    Double valorPib = Double.parseDouble(valor);
+
+                    System.out.println("Após tratamento: Data=" + dataApuracao + " | Valor PIB=" + valorPib);
+
                     jdbcTemplate.update(
                         "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
-                            0.0,
-                        "1000"
+                        valorPib,
+                        dataApuracao
                     );
 
                     List<PibConstrucaoCivil> pib = jdbcTemplate.query(
@@ -174,7 +181,7 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                     jdbcTemplate.update(
                         "INSERT INTO logPibConstrucaoCivil (idPibConstrucaoCivil, descricao) VALUES (?, ?)",
                         pib.getFirst().getId(),
-                        "Registro inseridos com sucesso"
+                        "Registro " + valorPib + " e " + dataApuracao + " inseridos com sucesso"
                     );
 
                     count++;
