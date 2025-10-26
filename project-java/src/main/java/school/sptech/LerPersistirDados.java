@@ -255,6 +255,7 @@ public void inserirDadosPib(String key) {
 
             String[] linha;
             int count = 0;
+            int countLinhas = 0;
             while ((linha = csvReader.readNext()) != null) {
                 // Esperado: ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona
                 if (linha.length >= 10) {
@@ -269,11 +270,12 @@ public void inserirDadosPib(String key) {
                         Double idadeMedia = Double.parseDouble(linha[7].replace(",", "."));
                         Double densidadeDemografico = Double.parseDouble(linha[8].replace(",", "."));
 
+
                         List<String> zonaLeste = List.of("Aricanduva", "São Mateus", "Itaquera", "Penha", "Vila Prudente", "Cidade Tiradentes");
                         List<String> zonaSul = List.of("Capão Redondo", "Campo Limpo", "Jardim Ângela", "Morumbi", "Santo Amaro", "Interlagos");
                         List<String> zonaNorte = List.of("Santana", "Tucuruvi", "Casa Verde", "Freguesia do Ó", "Jaçanã", "Brasilândia");
                         List<String> zonaOeste = List.of("Pinheiros", "Lapa", "Butantã", "Barra Funda", "Perdizes", "Vila Leopoldina");
-                        int idZona = 0;
+                        Integer idZona = 0;
                         if(zonaLeste.contains(municipio)){
                             idZona = 1;
                         }else if(zonaSul.contains(municipio)){
@@ -284,32 +286,37 @@ public void inserirDadosPib(String key) {
                             idZona = 4;
                         }
 
-                        jdbcTemplate.update(
-                                "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) " +
-                                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                                ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                                razaoSexo, idadeMedia, densidadeDemografico, idZona
-                        );
+                        if(idZona > 0){
+                            System.out.println(ano+ codigoIbge+ municipio+ qtdPopulacao+ homens+ mulheres+ razaoSexo+ idadeMedia+ densidadeDemografico+ idZona);
+                            jdbcTemplate.update(
+                                    "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) " +
+                                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                    ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
+                                    razaoSexo, idadeMedia, densidadeDemografico, idZona
+                            );
 
-                        List<Populacao> pop = jdbcTemplate.query(
-                                "SELECT * FROM populacao ORDER BY id DESC LIMIT 1",
-                                new BeanPropertyRowMapper<>(Populacao.class)
-                        );
+                            List<Populacao> pop = jdbcTemplate.query(
+                                    "SELECT * FROM populacao ORDER BY id DESC LIMIT 1",
+                                    new BeanPropertyRowMapper<>(Populacao.class)
+                            );
 
-                        jdbcTemplate.update(
-                                "INSERT INTO logPopulacao (idPopulacao, descricao) VALUES (?, ?)",
-                                pop.get(0).getId(),
-                                "Registro de população (" + municipio + ") inserido com sucesso."
-                        );
+                            jdbcTemplate.update(
+                                    "INSERT INTO logPopulacao (idPopulacao, descricao) VALUES (?, ?)",
+                                    pop.get(0).getId(),
+                                    "Registro de população (" + municipio + ") inserido com sucesso."
+                            );
 
-                        count++;
+                            count++;
+                        }
+
+                        countLinhas++;
                     } catch (Exception e) {
                         System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
                     }
                 }
             }
 
-            System.out.println("[" + timestamp + "] Inserção de " + count + " registros de população concluída!");
+            System.out.println("[" + timestamp + "] Inserção de " + count + " registros de população concluída!" + " Qunatas linhas ele passou: " + countLinhas);
 
         } catch (DataAccessException e) {
             throw new RuntimeException("[" + timestamp + "]  Erro no banco de dados: " + e.getMessage(), e);
