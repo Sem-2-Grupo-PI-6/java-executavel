@@ -163,7 +163,12 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                     String dataApuracao = linha[0];
                     System.out.println(dataApuracao);
 
-                    String valor = linha[1].replace(",", "");
+                    String valor = linha[1].replace(",", "").replace(".", "");
+                    if (valor.length() > 2) {
+                        valor = valor.substring(0, valor.length() - 2) + ".00";
+                    } else {
+                        valor = "0.00";
+                    }
                     Double valorPib = Double.parseDouble(valor);
                     System.out.println(valorPib);
 
