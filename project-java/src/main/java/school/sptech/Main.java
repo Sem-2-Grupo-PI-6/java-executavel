@@ -12,15 +12,22 @@ public class Main {
             e.printStackTrace();
         }
 
-        List<String> arquivosXlsx = List.of(
+        List<String> arquivosCsv = List.of(
                 "inflacao.xlsx",
                 "populacao.xlsx",
                 "ipeaData_PIB_ConstrucaoCivil.xlsx",
                 "selic.xlsx"
         );
 
-        LerPersistirDados inflacao = new LerPersistirDados();
-        inflacao.inserirDadosInflacao("inflacao.csv");
+        LerPersistirDados persistirDados = new LerPersistirDados();
+
+        for (String csv : arquivosCsv) {
+            if(csv == "inflacao.csv"){
+                persistirDados.inserirDadosInflacao(csv);
+            } else if (csv == "selic.csv") {
+                persistirDados.inserirDadosSelic(csv);
+            }
+        }
 
     }
 }

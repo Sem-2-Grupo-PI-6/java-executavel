@@ -134,7 +134,6 @@ public class LerPersistirDados {
                 }
             }
         }
-
         System.out.println("[" + timestamp + "] Inserção de " + count + " registros concluída com sucesso!");
 
     } catch (DataAccessException e) {
