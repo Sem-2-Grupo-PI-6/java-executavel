@@ -13,11 +13,9 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -254,7 +252,7 @@ public void inserirDadosPib(String key) {
 
         try (InputStream inputStream = baixarArquivo(key);
              InputStreamReader isr = new InputStreamReader(inputStream);
-             CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(key), StandardCharsets.UTF_8))) {
+             CSVReader csvReader = new CSVReader(isr)) {
 
             String[] linha;
             int count = 0;
@@ -275,19 +273,24 @@ public void inserirDadosPib(String key) {
 
                         municipio = municipio.trim().toLowerCase();
                         municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
-                                .replaceAll("\\p{M}", ""); 
+                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                        List<String> zonaLeste = List.of("itaquera", "penha", "vila prudente", "cidade tiradentes");
-                        List<String> zonaSul   = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro");
-                        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia");
-                        List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina");
+                        List<String> zonaLeste = List.of("sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes", "sao miguel paulista", "ermelino matarazzo", "tatuape", "aricanduva", "guilhermina esperanca");
+                        List<String> zonaSul   = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos", "vila mariana", "vila andrade", "jabaquara", "campo belo");
+                        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
+                        List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina", "pirituba", "pompéia", "alto da lapa", "sumare");
                         System.out.println("Municipio lido: [" + municipio + "]");
 
                         Integer idZona = 0;
-                        if (zonaLeste.contains(municipio)) idZona = 1;
-                        else if (zonaSul.contains(municipio)) idZona = 2;
-                        else if (zonaNorte.contains(municipio)) idZona = 3;
-                        else if (zonaOeste.contains(municipio)) idZona = 4;
+                        if(zonaLeste.contains(municipio.trim().toLowerCase())){
+                            idZona = 1;
+                        }else if(zonaSul.contains(municipio.trim().toLowerCase())){
+                            idZona = 2;
+                        } else if (zonaNorte.contains(municipio.trim().toLowerCase())) {
+                            idZona = 3;
+                        }else if(zonaOeste.contains(municipio.trim().toLowerCase())){
+                            idZona = 4;
+                        }
 
                         if(idZona > 0){
                             System.out.println(ano+ codigoIbge+ municipio+ qtdPopulacao+ homens+ mulheres+ razaoSexo+ idadeMedia+ densidadeDemografico+ idZona);
@@ -311,7 +314,7 @@ public void inserirDadosPib(String key) {
 
                             count++;
                         }else {
-                            System.out.println("zona invalida");
+                       
                         }
 
                         countLinhas++;
