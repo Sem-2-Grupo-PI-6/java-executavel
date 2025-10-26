@@ -158,8 +158,9 @@ public void inserirDadosPibConstrucaoCivil(String key) {
         while ((linha = csvReader.readNext()) != null) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
-                try {
 
+                try {
+                    System.out.println("Tetse");
                     String dataApuracao = linha[0];
                     System.out.println(dataApuracao);
 
