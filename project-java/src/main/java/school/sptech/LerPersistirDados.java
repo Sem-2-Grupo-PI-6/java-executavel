@@ -283,7 +283,7 @@ public void inserirDadosPib(String key) {
                         }else if(zonaOeste.contains(municipio)){
                             idZona = 4;
                         }
-                        
+
                         jdbcTemplate.update(
                                 "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) " +
                                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",

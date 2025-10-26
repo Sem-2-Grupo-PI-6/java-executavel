@@ -19,7 +19,7 @@ public class Main {
         );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosPopulacao("populacao.csv");
+        persistirDados.inserirDadosPopulacao("populacao2.csv");
 
     }
 }
