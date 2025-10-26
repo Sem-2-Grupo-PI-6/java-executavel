@@ -158,9 +158,10 @@ public void inserirDadosPibConstrucaoCivil(String key) {
         while ((linha = csvReader.readNext()) != null) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
+                String dataApuracao = linha[0];
+                String dataApuracaoTradada = dataApuracao.split(" ")[0];
+                System.out.println(dataApuracaoTradada);
                 try {
-                    String dataApuracao = linha[0];
-                    String dataApuracaoTradada = dataApuracao.split(" ")[0];
 
                     String valor = linha[1].replace(",", "");
                     Double valorPib = Double.parseDouble(valor);
