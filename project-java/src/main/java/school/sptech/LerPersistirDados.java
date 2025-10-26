@@ -275,13 +275,13 @@ public void inserirDadosPib(String key) {
                         List<String> zonaNorte = List.of("Santana", "Tucuruvi", "Casa Verde", "Freguesia do Ó", "Jaçanã", "Brasilândia");
                         List<String> zonaOeste = List.of("Pinheiros", "Lapa", "Butantã", "Barra Funda", "Perdizes", "Vila Leopoldina");
                         Integer idZona = 0;
-                        if(zonaLeste.contains(municipio)){
+                        if(zonaLeste.contains(municipio.toLowerCase())){
                             idZona = 1;
-                        }else if(zonaSul.contains(municipio)){
+                        }else if(zonaSul.contains(municipio.toLowerCase())){
                             idZona = 2;
-                        } else if (zonaNorte.contains(municipio)) {
+                        } else if (zonaNorte.contains(municipio.toLowerCase())) {
                             idZona = 3;
-                        }else if(zonaOeste.contains(municipio)){
+                        }else if(zonaOeste.contains(municipio.toLowerCase())){
                             idZona = 4;
                         }
 
