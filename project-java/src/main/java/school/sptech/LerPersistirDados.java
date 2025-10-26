@@ -70,7 +70,7 @@ public class LerPersistirDados {
                         jdbcTemplate.update(
                                 "INSERT INTO logInflacao (idInflacao, descricao) VALUES (?, ?)",
                                 inflacao.getFirst().getId(),
-                                "Od registros "+ taxaApuracao +" e "+ dataApuracao +" foram inseridos"
+                                "Os registros "+ taxaApuracao +" e "+ dataApuracao +" foram inseridos"
                         );
                         count++;
                     } catch (Exception e) {
@@ -160,15 +160,17 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
                 try {
                     String dataApuracao = linha[0];
+                    String dataApuracaoTradada = dataApuracao.split(" ")[0];
+
                     String valor = linha[1].replace(",", ".");
                     Double valorPib = Double.parseDouble(valor);
 
-                    System.out.println("Após tratamento: Data=" + dataApuracao + " | Valor PIB=" + valorPib);
+                    System.out.println("Após tratamento: Data=" + dataApuracaoTradada + " | Valor PIB=" + valorPib);
 
                     jdbcTemplate.update(
                         "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
                         valorPib,
-                        dataApuracao
+                        dataApuracaoTradada
                     );
 
                     List<PibConstrucaoCivil> pib = jdbcTemplate.query(

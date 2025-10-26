@@ -19,7 +19,7 @@ public class Main {
         );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosSelic("selic.csv");
+        persistirDados.inserirDadosSelic("ipeaData_PIB_ConstrucaoCivil.csv");
 
     }
 }
