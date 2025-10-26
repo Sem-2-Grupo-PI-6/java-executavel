@@ -158,19 +158,14 @@ public void inserirDadosPibConstrucaoCivil(String key) {
         while ((linha = csvReader.readNext()) != null) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
-
                 try {
                     System.out.println("Tetse");
                     String dataApuracao = linha[0];
                     System.out.println(dataApuracao);
 
                     String valor = linha[1].replace(",", "").replace(".", "");
-                    if (valor.length() > 2) {
-                        valor = valor.substring(0, valor.length() - 2) + ".00";
-                    } else {
-                        valor = "0.00";
-                    }
-                    Double valorPib = Double.parseDouble(valor);
+                    String valorCerto = valor + ".0";
+                    Double valorPib = Double.parseDouble(valorCerto);
                     System.out.println(valorPib);
 
                     System.out.println("Após tratamento: Data=" + dataApuracao + " | Valor PIB=" + valorPib);
