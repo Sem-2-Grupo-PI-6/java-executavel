@@ -161,20 +161,18 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                 try {
 
                     String dataApuracao = linha[0];
-                    String dataApuracaoTradada = dataApuracao.split(" ")[0];
-                    String dataCerta = dataApuracaoTradada + "-01-01";
-                    System.out.println(dataCerta);
+                    System.out.println(dataApuracao);
 
                     String valor = linha[1].replace(",", "");
                     Double valorPib = Double.parseDouble(valor);
                     System.out.println(valorPib);
 
-                    System.out.println("Após tratamento: Data=" + dataCerta+ " | Valor PIB=" + valorPib);
+                    System.out.println("Após tratamento: Data=" + dataApuracao + " | Valor PIB=" + valorPib);
 
                     jdbcTemplate.update(
                         "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
                         valorPib,
-                        dataCerta
+                        dataApuracao
                     );
 
                     List<PibConstrucaoCivil> pib = jdbcTemplate.query(
@@ -185,7 +183,7 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                     jdbcTemplate.update(
                         "INSERT INTO logPibConstrucaoCivil (idPibConstrucaoCivil, descricao) VALUES (?, ?)",
                         pib.getFirst().getId(),
-                        "Registro " + valorPib + " e " + dataApuracaoTradada + " inseridos com sucesso"
+                        "Registro " + valorPib + " e " + dataApuracao + " inseridos com sucesso"
                     );
 
                     count++;
@@ -194,7 +192,6 @@ public void inserirDadosPibConstrucaoCivil(String key) {
                 }
             }
         }
-
         System.out.println("[" + timestamp + "] Inserção de " + count + " registros concluída com sucesso!");
 
     } catch (DataAccessException e) {
