@@ -270,12 +270,12 @@ public void inserirDadosPib(String key) {
                         Double densidadeDemografico = Double.parseDouble(linha[8].replace(",", "."));
 
 
-                        List<String> zonaLeste = List.of("Aricanduva", "São Mateus", "Itaquera", "Penha", "Vila Prudente", "Cidade Tiradentes");
-                        List<String> zonaSul = List.of("Capão Redondo", "Campo Limpo", "Jardim Ângela", "Morumbi", "Santo Amaro", "Interlagos");
-                        List<String> zonaNorte = List.of("Santana", "Tucuruvi", "Casa Verde", "Freguesia do Ó", "Jaçanã", "Brasilândia");
-                        List<String> zonaOeste = List.of("Pinheiros", "Lapa", "Butantã", "Barra Funda", "Perdizes", "Vila Leopoldina");
+                        List<String> zonaLeste = List.of("aricanduva", "são mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes");
+                        List<String> zonaSul   = List.of("capão redondo", "campo limpo", "jardim ângela", "morumbi", "santo amaro", "interlagos");
+                        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do ó", "jaçanã", "brasilândia");
+                        List<String> zonaOeste = List.of("pinheiros", "lapa", "butantã", "barra funda", "perdizes", "vila leopoldina");
 
-                        Integer idZona = 1;
+                        Integer idZona = 0;
                         if(zonaLeste.contains(municipio.toLowerCase())){
                             idZona = 1;
                         }else if(zonaSul.contains(municipio.toLowerCase())){
