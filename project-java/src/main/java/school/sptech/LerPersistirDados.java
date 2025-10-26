@@ -158,14 +158,14 @@ public void inserirDadosPibConstrucaoCivil(String key) {
         while ((linha = csvReader.readNext()) != null) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
+
                 String dataApuracao = linha[0];
                 String dataApuracaoTradada = dataApuracao.split(" ")[0];
-                System.out.println(dataApuracaoTradada);
+
+                String valor = linha[1].replace(",", "");
+                Double valorPib = Double.parseDouble(valor);
                 try {
-
-                    String valor = linha[1].replace(",", "");
-                    Double valorPib = Double.parseDouble(valor);
-
+                    
                     System.out.println("Após tratamento: Data=" + dataApuracaoTradada + " | Valor PIB=" + valorPib);
 
                     jdbcTemplate.update(
@@ -187,7 +187,7 @@ public void inserirDadosPibConstrucaoCivil(String key) {
 
                     count++;
                 } catch (Exception e) {
-                    System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
+                    System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage() + " Data tradada: " + dataApuracaoTradada + " Oib tratado: " + valorPib);
                 }
             }
         }
