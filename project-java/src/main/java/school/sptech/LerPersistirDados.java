@@ -162,22 +162,19 @@ public void inserirDadosPibConstrucaoCivil(String key) {
 
                     String dataApuracao = linha[0];
                     String dataApuracaoTradada = dataApuracao.split(" ")[0];
-                    System.out.println(dataApuracaoTradada);
+                    String dataCerta = dataApuracaoTradada + "-01-01";
+                    System.out.println(dataCerta);
 
-                    String valorBruto = linha[1];
-                    String valorLimpo = valorBruto.replaceAll("[^\\d.]", "");
-                    if (valorLimpo.chars().filter(ch -> ch == '.').count() > 1) {
-                        int lastDot = valorLimpo.lastIndexOf('.');
-                        valorLimpo = valorLimpo.substring(0, lastDot).replace(".", "") + valorLimpo.substring(lastDot);
-                    }
-                    Double valorPib = Double.parseDouble(valorLimpo);
+                    String valor = linha[1].replace(",", "");
+                    Double valorPib = Double.parseDouble(valor);
+                    System.out.println(valorPib);
 
-                    System.out.println("Após tratamento: Data=" + dataApuracaoTradada + " | Valor PIB=" + valorPib);
+                    System.out.println("Após tratamento: Data=" + dataCerta+ " | Valor PIB=" + valorPib);
 
                     jdbcTemplate.update(
                         "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
                         valorPib,
-                        dataApuracaoTradada
+                        dataCerta
                     );
 
                     List<PibConstrucaoCivil> pib = jdbcTemplate.query(
