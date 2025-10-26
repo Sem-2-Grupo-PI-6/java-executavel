@@ -279,16 +279,18 @@ public void inserirDadosPib(String key) {
                         List<String> zonaSul   = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos");
                         List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia");
                         List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina");
+                        System.out.println("Municipio lido: [" + municipio + "]");
+
 
 
                         Integer idZona = 0;
-                        if(zonaLeste.contains(municipio)){
+                        if(zonaLeste.contains(municipio.trim().toLowerCase())){
                             idZona = 1;
-                        }else if(zonaSul.contains(municipio)){
+                        }else if(zonaSul.contains(municipio.trim().toLowerCase())){
                             idZona = 2;
-                        } else if (zonaNorte.contains(municipio)) {
+                        } else if (zonaNorte.contains(municipio.trim().toLowerCase())) {
                             idZona = 3;
-                        }else if(zonaOeste.contains(municipio)){
+                        }else if(zonaOeste.contains(municipio.trim().toLowerCase())){
                             idZona = 4;
                         }
 
