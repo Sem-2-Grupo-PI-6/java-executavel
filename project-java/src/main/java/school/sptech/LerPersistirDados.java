@@ -258,7 +258,6 @@ public void inserirDadosPib(String key) {
             int countLinhas = 0;
             while ((linha = csvReader.readNext()) != null) {
                 // Esperado: ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona
-                if (linha.length >= 10) {
                     try {
                         String ano = linha[0];
                         String codigoIbge = linha[1];
@@ -307,13 +306,14 @@ public void inserirDadosPib(String key) {
                             );
 
                             count++;
+                        }else {
+                            System.out.println("zona invalida");
                         }
 
                         countLinhas++;
                     } catch (Exception e) {
                         System.err.println("Linha inválida: " + Arrays.toString(linha) + " -> " + e.getMessage());
                     }
-                }
             }
 
             System.out.println("[" + timestamp + "] Inserção de " + count + " registros de população concluída!" + " Qunatas linhas ele passou: " + countLinhas);
