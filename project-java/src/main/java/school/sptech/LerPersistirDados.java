@@ -13,9 +13,11 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -252,7 +254,7 @@ public void inserirDadosPib(String key) {
 
         try (InputStream inputStream = baixarArquivo(key);
              InputStreamReader isr = new InputStreamReader(inputStream);
-             CSVReader csvReader = new CSVReader(isr)) {
+             CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(key), StandardCharsets.UTF_8))) {
 
             String[] linha;
             int count = 0;
@@ -273,7 +275,7 @@ public void inserirDadosPib(String key) {
 
                         municipio = municipio.trim().toLowerCase();
                         municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
-                                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+                                .replaceAll("\\p{M}", ""); 
 
                         List<String> zonaLeste = List.of("itaquera", "penha", "vila prudente", "cidade tiradentes");
                         List<String> zonaSul   = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro");
@@ -282,15 +284,10 @@ public void inserirDadosPib(String key) {
                         System.out.println("Municipio lido: [" + municipio + "]");
 
                         Integer idZona = 0;
-                        if(zonaLeste.contains(municipio.trim().toLowerCase())){
-                            idZona = 1;
-                        }else if(zonaSul.contains(municipio.trim().toLowerCase())){
-                            idZona = 2;
-                        } else if (zonaNorte.contains(municipio.trim().toLowerCase())) {
-                            idZona = 3;
-                        }else if(zonaOeste.contains(municipio.trim().toLowerCase())){
-                            idZona = 4;
-                        }
+                        if (zonaLeste.contains(municipio)) idZona = 1;
+                        else if (zonaSul.contains(municipio)) idZona = 2;
+                        else if (zonaNorte.contains(municipio)) idZona = 3;
+                        else if (zonaOeste.contains(municipio)) idZona = 4;
 
                         if(idZona > 0){
                             System.out.println(ano+ codigoIbge+ municipio+ qtdPopulacao+ homens+ mulheres+ razaoSexo+ idadeMedia+ densidadeDemografico+ idZona);
