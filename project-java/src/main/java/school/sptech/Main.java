@@ -11,21 +11,20 @@ public class Main {
             System.err.println("Falha na conexão: " + e.getMessage());
             e.printStackTrace();
         }
-
         List<String> arquivosCsv = List.of(
-                "inflacao.xlsx",
-                "populacao.xlsx",
-                "ipeaData_PIB_ConstrucaoCivil.xlsx",
-                "selic.xlsx"
+                "inflacao.csv",
+                "selic.csv",
+                "populacao.csv",
+                "ipeaData_PIB_ConstrucaoCivil.csv"
         );
-
         LerPersistirDados persistirDados = new LerPersistirDados();
 
         for (String csv : arquivosCsv) {
             if(csv == "inflacao.csv"){
-                persistirDados.inserirDadosInflacao(csv);
+                persistirDados.inserirDadosInflacao("inflacao.csv");
+                System.out.println("Chamando o metodo para inserir os dados da inflacao");
             } else if (csv == "selic.csv") {
-                persistirDados.inserirDadosSelic(csv);
+                persistirDados.inserirDadosSelic("selic.csv");
             }
         }
 
