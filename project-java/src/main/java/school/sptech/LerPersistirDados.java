@@ -313,8 +313,6 @@ public void inserirDadosPib(String key) {
                             );
 
                             count++;
-                        }else {
-                       
                         }
 
                         countLinhas++;

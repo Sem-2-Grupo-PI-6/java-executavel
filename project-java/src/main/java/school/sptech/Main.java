@@ -19,7 +19,8 @@ public class Main {
         );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosPopulacao("populacao2.csv");
+        persistirDados.inserirDadosPopulacao("inflacao.csv");
+
 
     }
 }
