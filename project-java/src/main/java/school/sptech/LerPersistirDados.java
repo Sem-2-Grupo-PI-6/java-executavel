@@ -216,7 +216,7 @@ public void inserirDadosPib(String key) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
                 try {
-                    String trimestre = linha[0].replace("�", "");
+                    String trimestre = linha[0].replace("�", "º");
                     String ano = linha[1];
                     String valor = linha[14];
                     Double valorPib = Double.parseDouble(valor);
