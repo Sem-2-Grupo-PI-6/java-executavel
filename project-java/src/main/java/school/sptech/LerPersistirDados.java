@@ -216,16 +216,27 @@ public void inserirDadosPib(String key) {
             if (linha.length >= 2 && linha[0] != null && linha[1] != null &&
                 !linha[0].isEmpty() && !linha[1].isEmpty()) {
                 try {
-                    String valorStr = linha[0].replace(",", ".");
-                    String idZonaStr = linha[1];
+                    String trimestre = linha[0];
+                    String ano = linha[1];
+                    String valor = linha[15];
+                    Double valorPib = Double.parseDouble(valor);
 
-                    Integer valor = (int) Double.parseDouble(valorStr);
-                    Integer idZona = Integer.parseInt(idZonaStr);
+                    System.out.println("Trimestre: " + trimestre + " Ano: "+ ano + " valor pib: " + valorPib);
 
                     jdbcTemplate.update(
-                        "INSERT INTO pib (valor, idZona) VALUES (?, ?)",
-                        valor,
-                        idZona
+                        "INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?)",
+                        trimestre,
+                        ano,
+                        valorPib
+                    );
+
+                    List<Pib> pib = jdbcTemplate
+                            .query("SELECT * FROM pib ORDER BY id DESC LIMIT 1;", new BeanPropertyRowMapper<>(Pib.class));
+
+                    jdbcTemplate.update(
+                            "INSERT INTO logPib (idPib, descricao) VALUES (?, ?)",
+                            pib.getFirst().getId(),
+                            "Registro " + valorPib + " e " + trimestre + " e " + ano + " inseridos com sucesso"
                     );
 
                     count++;

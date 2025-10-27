@@ -15,11 +15,12 @@ public class Main {
                 "inflacao.csv",
                 "selic.csv",
                 "populacao2.csv",
-                "ipeaData_PIB_ConstrucaoCivil.csv"
+                "ipeaData_PIB_ConstrucaoCivil.csv",
+                "pib.csv"
         );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosPibConstrucaoCivil("ipeaData_PIB_ConstrucaoCivil.csv");
+        persistirDados.inserirDadosPib("pib.csv");
 
 
     }

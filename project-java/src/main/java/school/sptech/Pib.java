@@ -2,16 +2,18 @@ package school.sptech;
 
 public class Pib {
     private Integer id;
-    private Integer valor;
-    private Integer idZona;
+    private String trimestre;
+    private String ano;
+    private Double pib;
 
     public Pib() {
     }
 
-    public Pib(Integer id, Integer valor, Integer idZona) {
+    public Pib(Integer id, String trimestre, String ano, Double pib) {
         this.id = id;
-        this.valor = valor;
-        this.idZona = idZona;
+        this.trimestre = trimestre;
+        this.ano = ano;
+        this.pib = pib;
     }
 
     public Integer getId() {
@@ -22,28 +24,37 @@ public class Pib {
         this.id = id;
     }
 
-    public Integer getValor() {
-        return valor;
+    public String getTrimestre() {
+        return trimestre;
     }
 
-    public void setValor(Integer valor) {
-        this.valor = valor;
+    public void setTrimestre(String trimestre) {
+        this.trimestre = trimestre;
     }
 
-    public Integer getIdZona() {
-        return idZona;
+    public String getAno() {
+        return ano;
     }
 
-    public void setIdZona(Integer idZona) {
-        this.idZona = idZona;
+    public void setAno(String ano) {
+        this.ano = ano;
+    }
+
+    public Double getPib() {
+        return pib;
+    }
+
+    public void setPib(Double pib) {
+        this.pib = pib;
     }
 
     @Override
     public String toString() {
         return "Pib{" +
                 "id=" + id +
-                ", valor=" + valor +
-                ", idZona=" + idZona +
+                ", trimestre='" + trimestre + '\'' +
+                ", ano='" + ano + '\'' +
+                ", pib=" + pib +
                 '}';
     }
 }
