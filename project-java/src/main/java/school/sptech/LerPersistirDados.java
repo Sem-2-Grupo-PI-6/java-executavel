@@ -201,7 +201,6 @@ public void inserirDadosPibConstrucaoCivil(String key) {
         throw new RuntimeException("[" + timestamp + "]  Erro inesperado: " + e.getMessage(), e);
     }
 }
-
 public void inserirDadosPib(String key) {
     String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     System.out.println("[" + timestamp + "] ⏳ Iniciando leitura do arquivo CSV: " + key);

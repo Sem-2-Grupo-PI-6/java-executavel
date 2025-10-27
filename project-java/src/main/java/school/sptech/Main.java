@@ -11,17 +11,13 @@ public class Main {
             System.err.println("Falha na conexão: " + e.getMessage());
             e.printStackTrace();
         }
-        List<String> arquivosCsv = List.of(
-                "inflacao.csv",
-                "selic.csv",
-                "populacao2.csv",
-                "ipeaData_PIB_ConstrucaoCivil.csv",
-                "pib.csv"
-        );
         LerPersistirDados persistirDados = new LerPersistirDados();
 
+        persistirDados.inserirDadosInflacao("inflacao.csv");
+        persistirDados.inserirDadosSelic("selic.csv");
+        persistirDados.inserirDadosPibConstrucaoCivil("ipeaData_PIB_ConstrucaoCivil.csv");
         persistirDados.inserirDadosPib("pib.csv");
 
-
+        
     }
 }
