@@ -13,11 +13,11 @@ public class Main {
         }
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosInflacao("inflacao.csv");
-        persistirDados.inserirDadosSelic("selic.csv");
-        persistirDados.inserirDadosPibConstrucaoCivil("ipeaData_PIB_ConstrucaoCivil.csv");
-        persistirDados.inserirDadosPib("pib.csv");
+        persistirDados.inserirDadosInflacao("inflacao.xlsx");
+        persistirDados.inserirDadosSelic("selic.xlsx");
+        persistirDados.inserirDadosPibConstrucaoCivil("ipeaData_PIB_ConstrucaoCivil.xlsx");
+        persistirDados.inserirDadosPib("pib.xlsx");
 
-        
+
     }
 }
