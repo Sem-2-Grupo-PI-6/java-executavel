@@ -275,6 +275,7 @@ public void inserirDadosPib(String key) {
                         municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                                 .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
+
                         List<String> zonaLeste = List.of("sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes", "sao miguel paulista", "ermelino matarazzo", "tatuape", "aricanduva", "guilhermina esperanca");
                         List<String> zonaSul   = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos", "vila mariana", "vila andrade", "jabaquara", "campo belo");
                         List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
