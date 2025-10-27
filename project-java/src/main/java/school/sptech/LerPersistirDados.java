@@ -147,11 +147,6 @@ public class LerPersistirDados {
                     Cell cellDataApuracao = row.getCell(0);
                     Cell cellValorPib = row.getCell(1);
 
-                    if (cellDataApuracao == null || cellValorPib == null) {
-                        System.err.println("Linha " + row.getRowNum() + " ignorada: célula vazia.");
-                        continue;
-                    }
-
                     String dataApuracao = cellDataApuracao.toString().split(" ")[0];
                     Double valorPib = Double.parseDouble(cellValorPib.toString().replace(",", ""));
 
