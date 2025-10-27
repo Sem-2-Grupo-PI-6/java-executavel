@@ -125,7 +125,7 @@ public class LerPersistirDados {
                 }
             }
 
-            System.out.println("[" + timestamp + "] Inserção de " + count + " registros de SELIC concluída!");
+            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " registros de SELIC concluída!");
         } catch (Exception e) {
             tratarErro(e, timestamp);
         }
@@ -143,56 +143,47 @@ public class LerPersistirDados {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue; // pula cabeçalho
 
-                // Evita null pointer para células ausentes
-                Cell cellData = row.getCell(0);
-                Cell cellValor = row.getCell(1);
-
-                // pula linhas totalmente vazias
-                if (cellData == null && cellValor == null) continue;
-
-                String dataApuracao = cellData != null ? cellData.toString().trim() : "";
-                String valorStr = cellValor != null ? cellValor.toString().replace(",", ".") : "";
-
-                if (dataApuracao.isEmpty() || valorStr.isEmpty()) {
-                    System.err.println("Linha " + row.getRowNum() + " ignorada (dados vazios)");
-                    continue;
-                }
-
                 try {
-                    Double taxaApuracao = Double.parseDouble(valorStr);
+                    Cell cellDataApuracao = row.getCell(0);
+                    Cell cellValorPib = row.getCell(1);
 
-                    System.out.println("Linha " + row.getRowNum() +
-                            ": Data=" + dataApuracao +
-                            " | Taxa=" + taxaApuracao);
+                    if (cellDataApuracao == null || cellValorPib == null) {
+                        System.err.println("Linha " + row.getRowNum() + " ignorada: célula vazia.");
+                        continue;
+                    }
 
-                    jdbcTemplate.update(
-                            "INSERT INTO inflacao (taxaInflacao, dataApuracao) VALUES (?, ?)",
-                            taxaApuracao, dataApuracao
-                    );
-
-                    List<Inflacao> inflacao = jdbcTemplate.query(
-                            "SELECT * FROM inflacao ORDER BY id DESC LIMIT 1",
-                            new BeanPropertyRowMapper<>(Inflacao.class)
-                    );
+                    String dataApuracao = cellDataApuracao.toString().split(" ")[0];
+                    Double valorPib = Double.parseDouble(cellValorPib.toString().replace(",", ""));
 
                     jdbcTemplate.update(
-                            "INSERT INTO logInflacao (idInflacao, descricao) VALUES (?, ?)",
-                            inflacao.getFirst().getId(),
-                            "Os registros " + taxaApuracao + " e " + dataApuracao + " foram inseridos"
+                            "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
+                            valorPib, dataApuracao
                     );
 
-                } catch (NumberFormatException e) {
-                    System.err.println("Linha " + row.getRowNum() +
-                            " ignorada: valor numérico inválido (" + valorStr + ")");
+                    List<PibConstrucaoCivil> pib = jdbcTemplate.query(
+                            "SELECT * FROM pibConstrucaoCivil ORDER BY id DESC LIMIT 1",
+                            new BeanPropertyRowMapper<>(PibConstrucaoCivil.class)
+                    );
+
+                    jdbcTemplate.update(
+                            "INSERT INTO logPibConstrucaoCivil (idPibConstrucaoCivil, descricao) VALUES (?, ?)",
+                            pib.getFirst().getId(),
+                            "Registro " + valorPib + " e " + dataApuracao + " inseridos com sucesso"
+                    );
+                    count++;
+
+                } catch (Exception e) {
+                    System.err.println(" Erro linha " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
 
+            System.out.println("Inserção concluída! Registros inseridos: " + count);
 
-            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " PIBs Constr. Civil concluída!");
         } catch (Exception e) {
-            tratarErro(e, timestamp);
+            throw new RuntimeException("Erro ao processar XLSX: " + e.getMessage(), e);
         }
     }
+
     public void inserirDadosPib(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.out.println("[" + timestamp + "] ⏳ Lendo XLSX: " + key);
