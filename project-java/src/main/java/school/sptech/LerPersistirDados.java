@@ -224,7 +224,7 @@ public void inserirDadosPib(String key) {
                     System.out.println("Trimestre: " + trimestre + " Ano: "+ ano + " valor pib: " + valorPib);
 
                     jdbcTemplate.update(
-                        "INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?)",
+                        "INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?, ?)",
                         trimestre,
                         ano,
                         valorPib
