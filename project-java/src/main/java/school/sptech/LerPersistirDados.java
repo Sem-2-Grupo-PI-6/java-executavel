@@ -150,6 +150,8 @@ public class LerPersistirDados {
                     String dataApuracao = cellDataApuracao.toString().split(" ")[0];
                     Double valorPib = Double.parseDouble(cellValorPib.toString().replace(",", ""));
 
+                    System.out.println("data apuracao: " + dataApuracao);
+
                     jdbcTemplate.update(
                             "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
                             valorPib, dataApuracao
