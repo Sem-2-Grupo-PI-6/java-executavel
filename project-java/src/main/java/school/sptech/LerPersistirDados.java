@@ -203,14 +203,14 @@ public class LerPersistirDados {
                     jdbcTemplate.update("INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?, ?)",
                             trimestre, ano, valorPib);
 
-                    List<Pib> pib = jdbcTemplate.query(
+                    List<Pib> pibList = jdbcTemplate.query(
                             "SELECT * FROM pib ORDER BY id DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Pib.class)
                     );
 
                     jdbcTemplate.update(
                             "INSERT INTO logPib (idPib, descricao) VALUES (?, ?)",
-                            pib.getFirst().getId(),
+                            pibList.getFirst().getId(),
                             "Registro " + valorPib + " | " + trimestre + " | " + ano + " inserido"
                     );
 
