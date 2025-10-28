@@ -77,7 +77,7 @@ public class LerPersistirDados {
                 }
             }
 
-            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " registros de inflação concluída!");
+            System.out.println("[" + timestamp + "] Inserção de " + count + " registros de inflação concluída!");
         } catch (Exception e) {
             tratarErro(e, timestamp);
         }
@@ -139,17 +139,16 @@ public class LerPersistirDados {
 
             Sheet sheet = workbook.getSheetAt(0);
             int count = 0;
-            DataFormatter formatter = new DataFormatter(); // converte qualquer célula para String
+            DataFormatter formatter = new DataFormatter();
 
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // pula cabeçalho
+                if (row.getRowNum() == 0) continue;
 
                 try {
                     Cell cellDataApuracao = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
                     Cell cellValorPib = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
                     if (cellDataApuracao == null || cellValorPib == null) {
-                        System.err.println("⚠️ Linha " + row.getRowNum() + " ignorada: célula vazia.");
                         continue;
                     }
 
