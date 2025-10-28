@@ -194,9 +194,11 @@ public class LerPersistirDados {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
                 try {
-                    String trimestre = row.getCell(0).toString().replace("�", "º");
-                    String ano = row.getCell(1).toString();
-                    Double valorPib = Double.parseDouble(row.getCell(14).toString());
+                    String trimestre = row.getCell(0).getStringCellValue().replace("�", "º");
+                    String ano = row.getCell(1).getStringCellValue();
+                    String pib = row.getCell(14).getStringCellValue().replace(",","");
+                    System.out.println("pib em string tratado: " + pib);
+                    Double valorPib = Double.parseDouble(pib);
 
                     jdbcTemplate.update("INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?, ?)",
                             trimestre, ano, valorPib);
