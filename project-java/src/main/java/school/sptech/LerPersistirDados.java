@@ -147,14 +147,22 @@ public class LerPersistirDados {
                     Cell cellDataApuracao = row.getCell(0);
                     Cell cellValorPib = row.getCell(1);
 
-                    String dataApuracao = cellDataApuracao.toString().split(" ")[0];
-                    Double valorPib = Double.parseDouble(cellValorPib.toString().replace(",", ""));
+                    if (cellDataApuracao == null || cellValorPib == null) {
+                        continue;
+                    }
 
-                    System.out.println("data apuracao: " + dataApuracao);
+                    String dataApuracaoRaw = cellDataApuracao.getStringCellValue().trim();
+                    String ano = dataApuracaoRaw.split(" ")[0];
+
+                    String valorRaw = cellValorPib.getStringCellValue().trim()
+                            .replace(",", "");
+                    Double valorPib = Double.parseDouble(valorRaw);
+
+                    System.out.println("Ano: " + ano + " | Valor PIB: " + valorPib);
 
                     jdbcTemplate.update(
                             "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
-                            valorPib, dataApuracao
+                            valorPib, ano
                     );
 
                     List<PibConstrucaoCivil> pib = jdbcTemplate.query(
@@ -164,22 +172,24 @@ public class LerPersistirDados {
 
                     jdbcTemplate.update(
                             "INSERT INTO logPibConstrucaoCivil (idPibConstrucaoCivil, descricao) VALUES (?, ?)",
-                            pib.getFirst().getId(),
-                            "Registro " + valorPib + " e " + dataApuracao + " inseridos com sucesso"
+                            pib.get(0).getId(),
+                            "Registro " + valorPib + " e " + ano + " inseridos com sucesso"
                     );
                     count++;
 
                 } catch (Exception e) {
-                    System.err.println(" Erro linha " + row.getRowNum() + ": " + e.getMessage());
+                    System.err.println("⚠️ Erro linha " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
 
-            System.out.println("Inserção concluída! Registros inseridos: " + count);
+            System.out.println("[" + timestamp + "] ✅ Inserção concluída! Registros inseridos: " + count);
 
         } catch (Exception e) {
             throw new RuntimeException("Erro ao processar XLSX: " + e.getMessage(), e);
         }
     }
+
+
 
     public void inserirDadosPib(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -190,15 +200,28 @@ public class LerPersistirDados {
 
             Sheet sheet = workbook.getSheetAt(0);
             int count = 0;
+            DataFormatter formatter = new DataFormatter(); // Formata qualquer célula como string
 
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;
+                if (row.getRowNum() == 0) continue; // Pula cabeçalho
+
                 try {
-                    String trimestre = row.getCell(0).getStringCellValue().replace("�", "º");
-                    String ano = row.getCell(1).getStringCellValue();
-                    String pib = row.getCell(14).getStringCellValue().replace(",","");
-                    System.out.println("pib em string tratado: " + pib);
-                    Double valorPib = Double.parseDouble(pib);
+                    Cell cellTrimestre = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellAno = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellPib = row.getCell(14, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+
+                    if (cellTrimestre == null || cellAno == null || cellPib == null) {
+                        System.err.println("⚠️ Linha " + row.getRowNum() + " ignorada: célula vazia.");
+                        continue;
+                    }
+
+                    String trimestre = formatter.formatCellValue(cellTrimestre).replace("�", "º");
+                    String ano = formatter.formatCellValue(cellAno);
+                    String pibStr = formatter.formatCellValue(cellPib).replace(",", "");
+
+                    Double valorPib = Double.parseDouble(pibStr);
+
+                    System.out.println("pib tratado: " + valorPib + " | trimestre: " + trimestre + " | ano: " + ano);
 
                     jdbcTemplate.update("INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?, ?)",
                             trimestre, ano, valorPib);
@@ -225,6 +248,7 @@ public class LerPersistirDados {
             tratarErro(e, timestamp);
         }
     }
+
 
     public void inserirDadosPopulacao(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
