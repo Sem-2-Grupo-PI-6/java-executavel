@@ -56,7 +56,7 @@ public class LerPersistirDados {
                     String valor = cValor.toString().replace(",", ".");
                     Double taxaApuracao = Double.parseDouble(valor);
 
-                    System.out.println("tentando inserir: " + taxaApuracao  + "e" + dataApuracao);
+
 
                     jdbcTemplate.update("INSERT INTO tblInflacao (valorTaxa, dtApuracao) VALUES (?, ?)",
                             taxaApuracao, dataApuracao);
@@ -65,6 +65,7 @@ public class LerPersistirDados {
                             "SELECT * FROM tblInflacao ORDER BY idtblInflacao DESC LIMIT 1;",
                             new BeanPropertyRowMapper<>(Inflacao.class)
                     );
+                    System.out.println(inflacao.getFirst().getId());
 
                     jdbcTemplate.update(
                             "INSERT INTO tblLogArquivos (tipoLog, descricao, tblInflacao_idtblInflacao) VALUES (?, ?, ?)",
@@ -74,6 +75,7 @@ public class LerPersistirDados {
                     );
 
                     count++;
+                    System.out.println("Os dados inseridos: " + taxaApuracao  + "e" + dataApuracao);
 
                 } catch (Exception e) {
                     jdbcTemplate.update(
