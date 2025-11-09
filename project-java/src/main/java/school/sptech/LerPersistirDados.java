@@ -62,7 +62,7 @@ public class LerPersistirDados {
                             taxaApuracao, dataApuracao);
 
                     List<Inflacao> inflacao = jdbcTemplate.query(
-                            "SELECT * FROM tblInflacao ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM tblInflacao ORDER BY idtblInflacao DESC LIMIT 1;",
                             new BeanPropertyRowMapper<>(Inflacao.class)
                     );
 
