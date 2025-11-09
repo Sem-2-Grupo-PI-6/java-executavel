@@ -116,7 +116,7 @@ public class LerPersistirDados {
                             taxaSelic, dataApuracao);
 
                     List<Selic> selic = jdbcTemplate.query(
-                            "SELECT * FROM tblSelic ORDER BY idtblSelic DESC LIMIT 1",
+                            "SELECT * FROM tblSelic ORDER BY idtblSelic DESC LIMIT 1;",
                             new BeanPropertyRowMapper<>(Selic.class)
                     );
                     System.out.println(selic.getFirst().getIdtblSelic());
