@@ -65,13 +65,13 @@ public class LerPersistirDados {
                             "SELECT * FROM tblInflacao ORDER BY idtblInflacao DESC LIMIT 1;",
                             new BeanPropertyRowMapper<>(Inflacao.class)
                     );
-                    System.out.println(inflacao.getFirst().getId());
+                    System.out.println(inflacao.getFirst().getIdtblInflacao());
 
                     jdbcTemplate.update(
                             "INSERT INTO tblLogArquivos (tipoLog, descricao, tblInflacao_idtblInflacao) VALUES (?, ?, ?)",
                             "INFO",
                             "Os registros " + taxaApuracao + " e " + dataApuracao + " foram inseridos na tabela de inflcao",
-                            inflacao.getFirst().getId()
+                            inflacao.getFirst().getIdtblInflacao()
                     );
 
                     count++;

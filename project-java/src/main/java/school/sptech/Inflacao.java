@@ -2,45 +2,39 @@ package school.sptech;
 
 public class Inflacao {
     private Integer idtblInflacao;
-    private Double taxaInflacao;
-    private String dataApuracao;
+    private Double valorTaxa;
+    private String dtApuracao;
 
-    public Inflacao() {
-    }
-
-    public Inflacao(Integer idtblInflacao, Double taxaInflacao, String dataApuracao) {
-        this.idtblInflacao = idtblInflacao;
-        this.taxaInflacao = taxaInflacao;
-        this.dataApuracao = dataApuracao;
-    }
-
-    public Integer getId() {
+    public Integer getIdtblInflacao() {
         return idtblInflacao;
     }
 
-
-    public Double getTaxaInflacao() {
-        return taxaInflacao;
+    public void setIdtblInflacao(Integer idtblInflacao) {
+        this.idtblInflacao = idtblInflacao;
     }
 
-    public void setTaxaInflacao(Double taxaInflacao) {
-        this.taxaInflacao = taxaInflacao;
+    public Double getValorTaxa() {
+        return valorTaxa;
     }
 
-    public String getDataApuracao() {
-        return dataApuracao;
+    public void setValorTaxa(Double valorTaxa) {
+        this.valorTaxa = valorTaxa;
     }
 
-    public void setDataApuracao(String dataApuracao) {
-        this.dataApuracao = dataApuracao;
+    public String getDtApuracao() {
+        return dtApuracao;
+    }
+
+    public void setDtApuracao(String dtApuracao) {
+        this.dtApuracao = dtApuracao;
     }
 
     @Override
     public String toString() {
         return "Inflacao{" +
-                "id=" + idtblInflacao +
-                ", taxaInflacao=" + taxaInflacao +
-                ", dataApuracao='" + dataApuracao + '\'' +
+                "idtblInflacao=" + idtblInflacao +
+                ", valorTaxa=" + valorTaxa +
+                ", dtApuracao='" + dtApuracao + '\'' +
                 '}';
     }
 }
