@@ -56,9 +56,9 @@ public class LerPersistirDados {
                     String valor = cValor.toString().replace(",", ".");
                     Double taxaApuracao = Double.parseDouble(valor);
 
-                    jdbcTemplate.update("INSERT INTO inflacao (taxaInflacao, dataApuracao) VALUES (?, ?)",
+                    jdbcTemplate.update("INSERT INTO tblInflacao (taxaInflacao, dataApuracao) VALUES (?, ?)",
                             taxaApuracao, dataApuracao);
-
+                    
                     List<Inflacao> inflacao = jdbcTemplate.query(
                             "SELECT * FROM tblInflacao ORDER BY id DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Inflacao.class)
