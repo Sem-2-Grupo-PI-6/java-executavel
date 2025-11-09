@@ -60,20 +60,25 @@ public class LerPersistirDados {
                             taxaApuracao, dataApuracao);
 
                     List<Inflacao> inflacao = jdbcTemplate.query(
-                            "SELECT * FROM inflacao ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM tblInflacao ORDER BY id DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Inflacao.class)
                     );
 
                     jdbcTemplate.update(
-                            "INSERT INTO logInflacao (idInflacao, descricao) VALUES (?, ?)",
-                            inflacao.getFirst().getId(),
-                            "Os registros " + taxaApuracao + " e " + dataApuracao + " foram inseridos"
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblInflacao_idtblInflacao) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros " + taxaApuracao + " e " + dataApuracao + " foram inseridos na tabela de inflcao",
+                            inflacao.getFirst().getId()
                     );
 
                     count++;
 
                 } catch (Exception e) {
-                    System.err.println("Erro na linha " + row.getRowNum() + ": " + e.getMessage());
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela de inflacao, erro: " + e.getMessage()
+                    );
                 }
             }
 

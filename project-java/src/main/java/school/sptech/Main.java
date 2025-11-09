@@ -14,9 +14,7 @@ public class Main {
         LerPersistirDados persistirDados = new LerPersistirDados();
 
         persistirDados.inserirDadosInflacao("inflacao.xlsx");
-        persistirDados.inserirDadosSelic("selic.xlsx");
-        persistirDados.inserirDadosPibConstrucaoCivil("ipeaData_PIB_ConstrucaoCivil.xlsx");
-        persistirDados.inserirDadosPib("pib.xlsx");
+
 
 
     }
