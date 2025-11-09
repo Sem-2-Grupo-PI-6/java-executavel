@@ -81,7 +81,6 @@ public class LerPersistirDados {
                     );
                 }
             }
-
             System.out.println("[" + timestamp + "] Inserção de " + count + " registros de inflação concluída!");
         } catch (Exception e) {
             tratarErro(e, timestamp);
