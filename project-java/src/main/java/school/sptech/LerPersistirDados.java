@@ -56,6 +56,8 @@ public class LerPersistirDados {
                     String valor = cValor.toString().replace(",", ".");
                     Double taxaApuracao = Double.parseDouble(valor);
 
+                    System.out.println("tentando inserir: " + taxaApuracao  + "e" + dataApuracao);
+
                     jdbcTemplate.update("INSERT INTO tblInflacao (valorTaxa, dtApuracao) VALUES (?, ?)",
                             taxaApuracao, dataApuracao);
 
