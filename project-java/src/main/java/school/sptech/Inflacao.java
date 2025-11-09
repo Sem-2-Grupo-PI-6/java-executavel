@@ -1,26 +1,23 @@
 package school.sptech;
 
 public class Inflacao {
-    private Integer id;
+    private Integer idtblInflacao;
     private Double taxaInflacao;
     private String dataApuracao;
 
     public Inflacao() {
     }
 
-    public Inflacao(Integer id, Double taxaInflacao, String dataApuracao) {
-        this.id = id;
+    public Inflacao(Integer idtblInflacao, Double taxaInflacao, String dataApuracao) {
+        this.idtblInflacao = idtblInflacao;
         this.taxaInflacao = taxaInflacao;
         this.dataApuracao = dataApuracao;
     }
 
     public Integer getId() {
-        return id;
+        return idtblInflacao;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Double getTaxaInflacao() {
         return taxaInflacao;
@@ -41,7 +38,7 @@ public class Inflacao {
     @Override
     public String toString() {
         return "Inflacao{" +
-                "id=" + id +
+                "id=" + idtblInflacao +
                 ", taxaInflacao=" + taxaInflacao +
                 ", dataApuracao='" + dataApuracao + '\'' +
                 '}';
