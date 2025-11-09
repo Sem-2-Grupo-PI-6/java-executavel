@@ -81,6 +81,7 @@ public class LerPersistirDados {
                             "ERROR",
                             "Erro a o tentar e inserir dados na tabela de inflacao, erro: " + e.getMessage()
                     );
+                    System.err.println("Erro na linha " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
             System.out.println("[" + timestamp + "] Inserção de " + count + " registros de inflação concluída!");

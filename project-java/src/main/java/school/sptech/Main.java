@@ -13,7 +13,7 @@ public class Main {
         }
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosSelic("selic.xlsx");
+        persistirDados.inserirDadosInflacao("inflacao.xlsx");
 
 
 
