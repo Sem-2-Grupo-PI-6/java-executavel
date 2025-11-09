@@ -65,7 +65,6 @@ public class LerPersistirDados {
                             "SELECT * FROM tblInflacao ORDER BY idtblInflacao DESC LIMIT 1;",
                             new BeanPropertyRowMapper<>(Inflacao.class)
                     );
-                    System.out.println(inflacao.getFirst().getIdtblInflacao());
 
                     jdbcTemplate.update(
                             "INSERT INTO tblLogArquivos (tipoLog, descricao, tblInflacao_idtblInflacao) VALUES (?, ?, ?)",
@@ -113,23 +112,31 @@ public class LerPersistirDados {
                     String dataApuracao = cData.toString().trim();
                     Double taxaSelic = Double.parseDouble(cValor.toString().replace(",", "."));
 
-                    jdbcTemplate.update("INSERT INTO selic (taxaSelic, dataApuracao) VALUES (?, ?)",
+                    jdbcTemplate.update("INSERT INTO tblSelic (valorTaxa, dtApuracao) VALUES (?, ?)",
                             taxaSelic, dataApuracao);
 
                     List<Selic> selic = jdbcTemplate.query(
-                            "SELECT * FROM selic ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM tblSelic ORDER BY idtblSelic DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Selic.class)
                     );
+                    System.out.println(selic.getFirst().getIdtblSelic());
 
                     jdbcTemplate.update(
-                            "INSERT INTO logSelic (idSelic, descricao) VALUES (?, ?)",
-                            selic.getFirst().getId(),
-                            "Registro " + taxaSelic + " e " + dataApuracao + " inseridos com sucesso"
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblSelic_idtblSelic) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros " + taxaSelic + " e " + dataApuracao + " foram inseridos na tabela de selic",
+                            selic.getFirst().getIdtblSelic()
                     );
 
                     count++;
+                    System.out.println("Os dados inseridos: " + taxaSelic  + "e" + dataApuracao);
 
                 } catch (Exception e) {
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela de selic erro: " + e.getMessage()
+                    );
                     System.err.println("Erro na linha " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
