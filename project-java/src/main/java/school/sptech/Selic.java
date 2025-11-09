@@ -2,28 +2,27 @@ package school.sptech;
 
 public class Selic {
     private Integer idtblSelic;
-    private Double taxaSelic;
-    private String dataApuracao;
+    private Double valorTaxa;
+    private String dtApuracao;
 
     public Integer getIdtblSelic() {
         return idtblSelic;
     }
 
-    public Double getTaxaSelic() {
-        return taxaSelic;
+    public Double getValorTaxa() {
+        return valorTaxa;
     }
 
-    public String getDataApuracao() {
-        return dataApuracao;
+    public String getDtApuracao() {
+        return dtApuracao;
     }
-
 
     @Override
     public String toString() {
         return "Selic{" +
-                "id=" + idtblSelic +
-                ", taxaSelic=" + taxaSelic +
-                ", dataApuracao='" + dataApuracao + '\'' +
+                "idtblSelic=" + idtblSelic +
+                ", valorTaxa=" + valorTaxa +
+                ", dtApuracao='" + dtApuracao + '\'' +
                 '}';
     }
 }
