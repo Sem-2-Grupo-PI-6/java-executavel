@@ -13,9 +13,7 @@ public class Main {
         }
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        persistirDados.inserirDadosSelic("selic.xlsx");
-
-
+        persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
 
     }
 }

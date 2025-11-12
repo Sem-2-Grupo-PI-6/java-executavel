@@ -215,51 +215,55 @@ public class LerPersistirDados {
         try (InputStream inputStream = baixarArquivo(key);
              Workbook workbook = new XSSFWorkbook(inputStream)) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(5);
             int count = 0;
-            DataFormatter formatter = new DataFormatter(); // Formata qualquer célula como string
+            DataFormatter formatter = new DataFormatter();
 
             for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Pula cabeçalho
+                if (row.getRowNum() == 0) continue;
 
                 try {
                     Cell cellTrimestre = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
                     Cell cellAno = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                    Cell cellPib = row.getCell(14, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellPib = row.getCell(12, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
-                    if (cellTrimestre == null || cellAno == null || cellPib == null) {
-                        System.err.println("⚠️ Linha " + row.getRowNum() + " ignorada: célula vazia.");
-                        continue;
-                    }
+                    if (cellTrimestre == null || cellAno == null || cellPib == null) continue;
+
 
                     String trimestre = formatter.formatCellValue(cellTrimestre).replace("�", "º");
-                    String ano = formatter.formatCellValue(cellAno);
-                    String pibStr = formatter.formatCellValue(cellPib).replace(",", "");
 
+                    String ano = formatter.formatCellValue(cellAno);
+
+                    String pibStr = formatter.formatCellValue(cellPib).replace(",", "");
                     Double valorPib = Double.parseDouble(pibStr);
 
-                    System.out.println("pib tratado: " + valorPib + " | trimestre: " + trimestre + " | ano: " + ano);
-
-                    jdbcTemplate.update("INSERT INTO pib (trimestre, ano, pib) VALUES (?, ?, ?)",
-                            trimestre, ano, valorPib);
+                    jdbcTemplate.update("INSERT INTO tblPib (trimestre, ano, pibGeral) VALUES (?, ?, ?)",
+                            trimestre, ano, valorPib
+                    );
 
                     List<Pib> pibList = jdbcTemplate.query(
-                            "SELECT * FROM pib ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM pibGeral ORDER BY id DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Pib.class)
                     );
 
                     jdbcTemplate.update(
-                            "INSERT INTO logPib (idPib, descricao) VALUES (?, ?)",
-                            pibList.getFirst().getId(),
-                            "Registro " + valorPib + " | " + trimestre + " | " + ano + " inserido"
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPib_idPib) VALUES (?, ?)",
+                            "INFO",
+                            "Os registros " + ano + ", " + trimestre +" e "+ valorPib+ " foram inseridos na tabela de selic",
+                            pibList.getFirst().getIdPib()
                     );
 
                     count++;
+                    System.out.println("dados inseridos, pib: " + valorPib + " | trimestre: " + trimestre + " | ano: " + ano);
                 } catch (Exception e) {
-                    System.err.println("Erro linha " + row.getRowNum() + ": " + e.getMessage());
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela de pib erro: " + e.getMessage()
+                    );
+                    System.err.println("Erro na linha " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
-
             System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " registros de PIB concluída!");
         } catch (Exception e) {
             tratarErro(e, timestamp);
