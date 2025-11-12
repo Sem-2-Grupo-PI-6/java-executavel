@@ -247,7 +247,7 @@ public class LerPersistirDados {
                     );
 
                     jdbcTemplate.update(
-                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPib_idPib) VALUES (?, ?)",
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPib_idPib) VALUES (?, ?, ?)",
                             "INFO",
                             "Os registros " + ano + ", " + trimestre +" e "+ valorPib+ " foram inseridos na tabela de selic",
                             pibList.getFirst().getIdPib()
