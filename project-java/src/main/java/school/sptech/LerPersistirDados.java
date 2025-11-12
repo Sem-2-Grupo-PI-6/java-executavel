@@ -242,7 +242,7 @@ public class LerPersistirDados {
                     );
 
                     List<Pib> pibList = jdbcTemplate.query(
-                            "SELECT * FROM pibGeral ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM tblPib ORDER BY idPib DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Pib.class)
                     );
 
