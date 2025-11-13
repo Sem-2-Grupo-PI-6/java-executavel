@@ -146,14 +146,14 @@ public class LerPersistirDados {
             tratarErro(e, timestamp);
         }
     }
-    public void inserirDadosPibConstrucaoCivil(String key) {
+    public void inserirDadosPibSetor(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.out.println("[" + timestamp + "] ⏳ Lendo XLSX: " + key);
 
         try (InputStream inputStream = baixarArquivo(key);
              Workbook workbook = new XSSFWorkbook(inputStream)) {
 
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(5);
             int count = 0;
             DataFormatter formatter = new DataFormatter();
 
@@ -161,40 +161,53 @@ public class LerPersistirDados {
                 if (row.getRowNum() == 0) continue;
 
                 try {
-                    Cell cellDataApuracao = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                    Cell cellValorPib = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellTrimestre = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellAno = row.getCell(1, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellConstrucaoCivil = row.getCell(7, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                    Cell cellServicoTotal = row.getCell(8, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
-                    if (cellDataApuracao == null || cellValorPib == null) {
-                        continue;
-                    }
+                    String ano = formatter.formatCellValue(cellAno).trim();
 
-                    String dataApuracaoRaw = formatter.formatCellValue(cellDataApuracao).trim();
-                    String ano = dataApuracaoRaw.split(" ")[0];
+                    String trimestre = formatter.formatCellValue(cellTrimestre).trim();
 
-                    String valorRaw = formatter.formatCellValue(cellValorPib).trim().replace(",", "");
-                    Double valorPib = Double.parseDouble(valorRaw);
+                    String valorConstrucaoCivelTexto = formatter.formatCellValue(cellConstrucaoCivil).trim().replace(",", "");
+                    Double valorRealConstrucaoCivil = Double.parseDouble(valorConstrucaoCivelTexto);
 
-                    System.out.println("Ano: " + ano + " | Valor PIB: " + valorPib);
+                    String valorServicoToalTexto = formatter.formatCellValue(cellServicoTotal).trim().replace(",", "");
+                    Double valorRealServicoTotal = Double.parseDouble(valorServicoToalTexto);
 
-                    jdbcTemplate.update(
-                            "INSERT INTO pibConstrucaoCivil (valorPib, dataApuracao) VALUES (?, ?)",
-                            valorPib, ano
-                    );
-
-                    List<PibConstrucaoCivil> pib = jdbcTemplate.query(
-                            "SELECT * FROM pibConstrucaoCivil ORDER BY id DESC LIMIT 1",
-                            new BeanPropertyRowMapper<>(PibConstrucaoCivil.class)
-                    );
 
                     jdbcTemplate.update(
-                            "INSERT INTO logPibConstrucaoCivil (idPibConstrucaoCivil, descricao) VALUES (?, ?)",
-                            pib.get(0).getId(),
-                            "Registro " + valorPib + " e " + ano + " inseridos com sucesso"
+                            "INSERT INTO tblPibSetor (trimestre, ano, construcaoCivil, servico) VALUES (?, ?, ?, ?)",
+                            trimestre,
+                            ano,
+                            valorRealConstrucaoCivil,
+                            valorRealServicoTotal
+                    );
+
+                    List<PibSetor> pib = jdbcTemplate.query(
+                            "SELECT * FROM tblPibSetor ORDER BY idtblPibSetor DESC LIMIT 1;",
+                            new BeanPropertyRowMapper<>(PibSetor.class)
+                    );
+
+                    System.out.println(pib.getFirst().getIdtblPibSetor());
+
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPibSetor_idtblPibSetor) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros " + trimestre + " | " + ano + " | " +  valorRealConstrucaoCivil + " | " + valorServicoToalTexto + " foram inseridos na tabela de pibSetor",
+                            pib.getFirst().getIdtblPibSetor()
                     );
                     count++;
+                    System.out.println("dados inseridos com sucesso!");
 
                 } catch (Exception e) {
-                    System.err.println("⚠️ Erro linha " + row.getRowNum() + ": " + e.getMessage());
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela de pibSetor erro: " + e.getMessage()
+                    );
+                    System.err.println("Erro linha " + row.getRowNum() + ": " + e.getMessage());
                 }
             }
 
