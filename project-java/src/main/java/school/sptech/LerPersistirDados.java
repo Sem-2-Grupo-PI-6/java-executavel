@@ -146,6 +146,63 @@ public class LerPersistirDados {
             tratarErro(e, timestamp);
         }
     }
+
+    public void inserirDadosPibRegionalSP(String key) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        System.out.println("[" + timestamp + "] ⏳ Iniciando leitura do arquivo XLSX: " + key);
+
+        try (InputStream inputStream = baixarArquivo(key);
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            int count = 0;
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                Cell cAno = row.getCell(0);
+                Cell cValor = row.getCell(1);
+
+                if (cAno == null || cValor == null) continue;
+
+                try {
+                    String ano = cAno.toString().trim();
+                    Double pibSp = Double.parseDouble(cValor.toString().replace(",", "."));
+
+                    jdbcTemplate.update("INSERT INTO tblPibRegionalSP (ano, pibSP) VALUES (?, ?)",
+                            ano, pibSp);
+
+                    List<PibRegionalSP> pib = jdbcTemplate.query(
+                            "SELECT * FROM tblPibRegionalSP ORDER BY idtblPibRegionalSP DESC LIMIT 1",
+                            new BeanPropertyRowMapper<>(PibRegionalSP.class)
+                    );
+                    System.out.println(pib.getFirst().getIdtblPibRegionalSP());
+
+                    jdbcTemplate.update(
+                            "INSERT INTO tblPibRegionalSP (tipoLog, descricao, tblPibRegionalSP_idtblPibRegionalSP) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros " + ano + " | " + pibSp + " foram inseridos na tabela PibRegionalSP",
+                            pib.getFirst().getIdtblPibRegionalSP()
+                    );
+
+                    count++;
+                    System.out.println("Os dados inseridos: " + ano  + "e" + pibSp);
+
+                } catch (Exception e) {
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela PibRegionalSP, erro: " + e.getMessage()
+                    );
+                    System.err.println("Erro na linha " + row.getRowNum() + ": " + e.getMessage());
+                }
+            }
+
+            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " registros de SELIC concluída!");
+        } catch (Exception e) {
+            tratarErro(e, timestamp);
+        }
+    }
+
     public void inserirDadosPibSetor(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.out.println("[" + timestamp + "] ⏳ Lendo XLSX: " + key);
