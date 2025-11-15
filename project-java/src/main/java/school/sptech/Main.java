@@ -16,6 +16,6 @@ public class Main {
         //persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
         //persistirDados.inserirDadosPopulacao("2t2025_tabelas_site-pib-trimestral.xlsx");
         //persistirDados.inserirDadosPopulacao("populcao.xlsx");
-        persistirDados.inserirDadosPibRegionalSP("pib_sp.xlsx");
+        persistirDados.inserirDadosPibRegionalSP("sp_pib.xlsx");
     }
 }

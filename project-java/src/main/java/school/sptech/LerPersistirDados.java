@@ -431,14 +431,14 @@ public class LerPersistirDados {
                 count++;
             }
 
-            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " zonas concluída!");
+            System.out.println("[" + timestamp + "] Inserção de " + count + " zonas concluída!");
         } catch (Exception e) {
             tratarErro(e, timestamp);
         }
     }
 
     private InputStream baixarArquivo(String key) throws IOException {
-        System.out.println("📦 Baixando do S3: " + bucketName + "/" + key);
+        System.out.println("Baixando do S3: " + bucketName + "/" + key);
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -446,10 +446,10 @@ public class LerPersistirDados {
 
         try {
             ResponseInputStream<GetObjectResponse> response = s3Client.getObject(request);
-            System.out.println("✅ Arquivo XLSX carregado com sucesso!");
+            System.out.println("Arquivo carregado");
             return response;
         } catch (S3Exception e) {
-            throw new IOException("Erro ao baixar do S3: " + e.awsErrorDetails().errorMessage(), e);
+            throw new IOException("erro ao baixar do s3: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 
