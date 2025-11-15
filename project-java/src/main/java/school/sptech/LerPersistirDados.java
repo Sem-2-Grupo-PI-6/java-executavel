@@ -166,9 +166,11 @@ public class LerPersistirDados {
 
                 try {
                     String ano = cAno.toString().trim();
+                    String[] partes = ano.split("\\.");
+                    String anoCerto = partes[0];
                     Double pibSp = Double.parseDouble(cValor.toString().replace(",", "."));
 
-                    System.out.println(ano + " " + pibSp);
+                    System.out.println(anoCerto + " " + pibSp);
                     jdbcTemplate.update("INSERT INTO tblPibRegionalSP (ano, pibSP) VALUES (?, ?)",
                             ano, pibSp);
 
