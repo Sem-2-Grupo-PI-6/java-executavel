@@ -13,9 +13,11 @@ public class Main {
         }
         LerPersistirDados persistirDados = new LerPersistirDados();
 
-        //persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
-        //persistirDados.inserirDadosPopulacao("2t2025_tabelas_site-pib-trimestral.xlsx");
-        //persistirDados.inserirDadosPopulacao("populcao.xlsx");
+        persistirDados.inserirDadosInflacao("inflacao.xlsx");
+        persistirDados.inserirDadosSelic("selic.xlsx");
+        persistirDados.inserirDadosPopulacao("populcao.xlsx");
+        persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
+        persistirDados.inserirDadosPibSetor("2t2025_tabelas_site-pib-trimestral.xlsx");
         persistirDados.inserirDadosPibRegionalSP("sp_pib.xlsx");
     }
 }
