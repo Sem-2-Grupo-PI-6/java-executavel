@@ -172,7 +172,7 @@ public class LerPersistirDados {
 
                     System.out.println(anoCerto + " " + pibSp);
                     jdbcTemplate.update("INSERT INTO tblPibRegionalSP (ano, pibSP) VALUES (?, ?)",
-                            ano, pibSp);
+                            anoCerto, pibSp);
 
                     List<PibRegionalSP> pib = jdbcTemplate.query(
                             "SELECT * FROM tblPibRegionalSP ORDER BY idtblPibRegionalSP DESC LIMIT 1",
@@ -188,7 +188,7 @@ public class LerPersistirDados {
                     );
 
                     count++;
-                    System.out.println("Os dados inseridos: " + ano  + "e" + pibSp);
+                    System.out.println("Os dados inseridos: " + anoCerto  + "e" + pibSp);
 
                 } catch (Exception e) {
                     jdbcTemplate.update(
