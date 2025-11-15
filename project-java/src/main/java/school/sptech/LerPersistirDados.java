@@ -179,7 +179,7 @@ public class LerPersistirDados {
                     System.out.println(pib.getFirst().getIdtblPibRegionalSP());
 
                     jdbcTemplate.update(
-                            "INSERT INTO tblPibRegionalSP (tipoLog, descricao, tblPibRegionalSP_idtblPibRegionalSP) VALUES (?, ?, ?)",
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPibRegionalSP_idtblPibRegionalSP) VALUES (?, ?, ?)",
                             "INFO",
                             "Os registros " + ano + " | " + pibSp + " foram inseridos na tabela PibRegionalSP",
                             pib.getFirst().getIdtblPibRegionalSP()
