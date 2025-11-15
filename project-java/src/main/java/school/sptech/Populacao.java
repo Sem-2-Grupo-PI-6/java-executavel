@@ -1,7 +1,7 @@
 package school.sptech;
 
 public class Populacao {
-    private Integer id;
+    private Integer idtblPopulacao;
     private String ano;
     private String codigoIbge;
     private String municipio;
@@ -10,34 +10,15 @@ public class Populacao {
     private Integer mulheres;
     private Double razaoSexo;
     private Double idadeMedia;
-    private Double densidadeDemografico;
+    private Double densidadeDemo;
     private Integer idZona;
 
-    public Populacao() {
+    public Integer getIdtblPopulacao() {
+        return idtblPopulacao;
     }
 
-    public Populacao(Integer id, String ano, String codigoIbge, String municipio,
-                     Integer qtdPopulacao, Integer homens, Integer mulheres,
-                     Double razaoSexo, Double idadeMedia, Double densidadeDemografico, Integer idZona) {
-        this.id = id;
-        this.ano = ano;
-        this.codigoIbge = codigoIbge;
-        this.municipio = municipio;
-        this.qtdPopulacao = qtdPopulacao;
-        this.homens = homens;
-        this.mulheres = mulheres;
-        this.razaoSexo = razaoSexo;
-        this.idadeMedia = idadeMedia;
-        this.densidadeDemografico = densidadeDemografico;
-        this.idZona = idZona;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdtblPopulacao(Integer idtblPopulacao) {
+        this.idtblPopulacao = idtblPopulacao;
     }
 
     public String getAno() {
@@ -104,12 +85,12 @@ public class Populacao {
         this.idadeMedia = idadeMedia;
     }
 
-    public Double getDensidadeDemografico() {
-        return densidadeDemografico;
+    public Double getDensidadeDemo() {
+        return densidadeDemo;
     }
 
-    public void setDensidadeDemografico(Double densidadeDemografico) {
-        this.densidadeDemografico = densidadeDemografico;
+    public void setDensidadeDemo(Double densidadeDemo) {
+        this.densidadeDemo = densidadeDemo;
     }
 
     public Integer getIdZona() {
@@ -123,7 +104,7 @@ public class Populacao {
     @Override
     public String toString() {
         return "Populacao{" +
-                "id=" + id +
+                "idtblPopulacao=" + idtblPopulacao +
                 ", ano='" + ano + '\'' +
                 ", codigoIbge='" + codigoIbge + '\'' +
                 ", municipio='" + municipio + '\'' +
@@ -132,7 +113,7 @@ public class Populacao {
                 ", mulheres=" + mulheres +
                 ", razaoSexo=" + razaoSexo +
                 ", idadeMedia=" + idadeMedia +
-                ", densidadeDemografico=" + densidadeDemografico +
+                ", densidadeDemo=" + densidadeDemo +
                 ", idZona=" + idZona +
                 '}';
     }

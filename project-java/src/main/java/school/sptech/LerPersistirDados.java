@@ -315,24 +315,31 @@ public class LerPersistirDados {
                     if (idZona == 0) continue;
 
                     jdbcTemplate.update(
-                            "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                            razaoSexo, idadeMedia, densidadeDemografico, idZona
+                            razaoSexo, idadeMedia, densidadeDemografico
                     );
 
                     List<Populacao> pop = jdbcTemplate.query(
-                            "SELECT * FROM populacao ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM tblPopulacao ORDER BY idtblPopulacao DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Populacao.class)
                     );
 
                     jdbcTemplate.update(
-                            "INSERT INTO logPopulacao (idPopulacao, descricao) VALUES (?, ?)",
-                            pop.get(0).getId(),
-                            "Registro de população (" + municipio + ") inserido com sucesso."
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPopulacao_idtblPopulacao) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros foram inseridos na tabela de populcao",
+                            pop.getFirst().getIdtblPopulacao()
                     );
 
                     count++;
+                    System.out.println("dados da tabela populacao inseridos com sucesso");
                 } catch (Exception e) {
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela de populacao erro: " + e.getMessage()
+                    );
                     System.err.println("Erro linha " + row.getRowNum() + ": " + e.getMessage());
                 }
                 total++;
