@@ -378,7 +378,7 @@ public class LerPersistirDados {
 
                     Integer zona = getZonaId(municipio);
 
-                    if(zona != 1) zona = 0;
+                    if(zona != 1) zona = 5;
 
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
