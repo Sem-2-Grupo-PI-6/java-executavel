@@ -373,12 +373,17 @@ public class LerPersistirDados {
 
                     municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
                     System.out.println(municipio);
 
+                    Integer zona = getZonaId(municipio);
+                    
+                    if(zona != 1) zona = 0;
+
                     jdbcTemplate.update(
-                            "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                            razaoSexo, idadeMedia, densidadeDemografico
+                            razaoSexo, idadeMedia, densidadeDemografico, zona
                     );
 
                     List<Populacao> pop = jdbcTemplate.query(
@@ -464,15 +469,61 @@ public class LerPersistirDados {
     }
 
     private int getZonaId(String municipio) {
-        List<String> zonaLeste = List.of("sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes", "sao miguel paulista", "ermelino matarazzo", "tatuape", "aricanduva", "guilhermina esperanca");
-        List<String> zonaSul = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos", "vila mariana", "vila andrade", "jabaquara", "campo belo");
-        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
-        List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina", "pirituba", "pompeia", "alto da lapa", "sumare");
+        List<String> zonaLeste = List.of(
+                "aruja",
+                "biritiba-mirim",
+                "ferraz de vasconcelos",
+                "guararema",
+                "guarulhos",
+                "itaquaquecetuba",
+                "mogi das cruzes",
+                "poa",
+                "salesopolis",
+                "santa isabel",
+                "suzano"
+        );
 
-        if (zonaLeste.contains(municipio)) return 1;
-        if (zonaSul.contains(municipio)) return 2;
-        if (zonaNorte.contains(municipio)) return 3;
-        if (zonaOeste.contains(municipio)) return 4;
+        List<String> zonaNorte = List.of(
+                "caieiras",
+                "cajamar",
+                "francisco morato",
+                "franco da rocha",
+                "mairipora"
+        );
+
+        List<String> zonaOeste = List.of(
+                "barueri",
+                "carapicuiba",
+                "itapevi",
+                "jandira",
+                "osasco",
+                "pirapora do bom jesus"
+        );
+
+        List<String> zonaSudoeste = List.of(
+                "cotia",
+                "embu das artes",
+                "embu-guaçu",
+                "itapecerica da serra",
+                "juquitiba",
+                "são lourenco da serra",
+                "taboao da serra",
+                "vargem grande paulista"
+        );
+
+        List<String> zonaSudeste = List.of(
+                "diadema",
+                "maua",
+                "ribeirao pires",
+                "rio grande da serra",
+                "santo andre",
+                "são bernardo do campo",
+                "são caetano do sul"
+        );
+
+
+        if(zonaLeste.contains(municipio)) return 1;
+
         return 0;
     }
 
