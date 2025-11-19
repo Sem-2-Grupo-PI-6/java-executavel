@@ -359,6 +359,9 @@ public class LerPersistirDados {
 
                 try {
                     String ano = row.getCell(0).toString();
+                    String[] partes = ano.split("\\.");
+                    String anoCerto = partes[0];
+
                     String codigoIbge = row.getCell(1).toString();
                     String municipio = row.getCell(2).toString().trim().toLowerCase();
                     int qtdPopulacao = (int) Double.parseDouble(row.getCell(3).toString());
@@ -374,7 +377,7 @@ public class LerPersistirDados {
 
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
+                            anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
                             razaoSexo, idadeMedia, densidadeDemografico
                     );
 
