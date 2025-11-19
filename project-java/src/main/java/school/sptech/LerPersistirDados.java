@@ -370,9 +370,7 @@ public class LerPersistirDados {
 
                     municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-
-                    int idZona = getZonaId(municipio);
-                    if (idZona == 0) continue;
+                    System.out.println(municipio);
 
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
