@@ -377,11 +377,11 @@ public class LerPersistirDados {
                     System.out.println(municipio);
 
                     Integer zona = getZonaId(municipio);
-                    
+
                     if(zona != 1) zona = 0;
 
                     jdbcTemplate.update(
-                            "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
                             razaoSexo, idadeMedia, densidadeDemografico, zona
                     );
