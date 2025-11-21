@@ -8,6 +8,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.Connection;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,56 @@ public class SlackNotifier {
                         "    GROUP BY z.nome\n" +
                         "    ORDER BY SUM(p.qtdPopulacao) DESC LIMIT 1;", (String.class));
         return zonaComMaiorQtdPopulacao;
+    }
+
+    public Double buscarTaxaSelicAtual() {
+        Double taxaSelicAtual = jdbcTemplate
+                .queryForObject("SELECT valorTaxa FROM tblSelic AS s\n" +
+                        "JOIN tblLogArquivos AS l\n" +
+                        "ON l.tblSelic_idtblSelic = s.idtblSelic \n" +
+                        "WHERE DATE(dataHoraLeitura) = CURRENT_DATE;", (Double.class));
+        System.out.println(taxaSelicAtual);
+        return taxaSelicAtual;
+    }
+
+    public Double buscarTaxaSelicAnterior() {
+        LocalDate dataAtual = jdbcTemplate
+                .queryForObject("SELECT DATE(dataHoraLeitura) FROM tblLogArquivos ORDER BY dataHoraLeitura DESC LIMIT 1;", (LocalDate.class));
+
+        LocalDate dataAnterior = dataAtual.minusDays(1);
+
+        Double taxaSelicAnterior = jdbcTemplate
+                .queryForObject("SELECT valorTaxa FROM tblSelic AS s\n" +
+                        "JOIN tblLogArquivos AS l\n" +
+                        "ON l.tblSelic_idtblSelic = s.idtblSelic \n" +
+                        "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
+        System.out.println(taxaSelicAnterior);
+        return taxaSelicAnterior;
+    }
+
+    public Double buscarPibConstrucaoCivilAtual() {
+        Double pibConstrucaoCivilAtual = jdbcTemplate
+                .queryForObject("SELECT pibSP FROM tblPibRegionalSP AS p\n" +
+                        "JOIN tblLogArquivos AS l\n" +
+                        "ON l.tblSelic_idtblSelic = p.idtblPibRegionalSP\n" +
+                        "WHERE DATE(dataHoraLeitura) = CURRENT_DATE;", (Double.class));
+        System.out.println(pibConstrucaoCivilAtual);
+        return pibConstrucaoCivilAtual;
+    }
+
+    public Double buscarPibConstrucaoCivilAnterior() {
+        LocalDate dataAtual = jdbcTemplate
+                .queryForObject("SELECT DATE(dataHoraLeitura) FROM tblLogArquivos ORDER BY dataHoraLeitura DESC LIMIT 1;", (LocalDate.class));
+
+        LocalDate dataAnterior = dataAtual.minusDays(1);
+
+        Double pibConstrucaoCivilAnterior = jdbcTemplate
+                .queryForObject("SELECT pibSP FROM tblPibRegionalSP AS p\n" +
+                        "JOIN tblLogArquivos AS l\n" +
+                        "ON l.tblSelic_idtblSelic = p.idtblPibRegionalSP\n" +
+                        "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
+        System.out.println(pibConstrucaoCivilAnterior);
+        return pibConstrucaoCivilAnterior;
     }
 
     public void enviar(String mensagem) {

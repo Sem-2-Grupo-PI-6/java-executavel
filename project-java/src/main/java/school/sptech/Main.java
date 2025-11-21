@@ -35,5 +35,9 @@ public class Main {
 
         slack.buscarZonaPorMaiorQtdPopulacao();
         slack.enviar("🚨ALERTA🚨");
+        slack.buscarTaxaSelicAtual();
+        slack.buscarTaxaSelicAnterior();
+        slack.buscarPibConstrucaoCivilAtual();
+        slack.buscarPibConstrucaoCivilAnterior();
     }
 }
