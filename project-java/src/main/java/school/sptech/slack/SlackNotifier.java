@@ -194,7 +194,28 @@ public class SlackNotifier {
             }
         }
 
-        if (notificacaoCrescimentoPib == 1) {
+        Double diferencaPib = null;
+        if (notificacaoCrescimentoPib == 0) {
+
+            if (buscarPibConstrucaoCivilAtual() > buscarPibConstrucaoCivilAnterior()) {
+                diferencaPib = buscarPibConstrucaoCivilAtual() - buscarPibConstrucaoCivilAnterior();
+                mensagem = "🚨ALERTA🚨\n" +
+                        "O PIB no setor de Construção Civil aumentou de " + buscarPibConstrucaoCivilAnterior() + " para " + buscarPibConstrucaoCivilAtual() + ".\n" +
+                        "A diferença do PIB anterior para o atual seria de + " + diferencaPib + " no PIB.";
+            }
+
+            if (buscarPibConstrucaoCivilAtual() < buscarPibConstrucaoCivilAnterior()) {
+                diferencaSelic = buscarTaxaSelicAtual() - buscarPibConstrucaoCivilAnterior();
+                mensagem = "🚨ALERTA🚨\n" +
+                        "O PIB no setor de Construção Civil diminuiu de " + buscarPibConstrucaoCivilAnterior() + " para " + buscarPibConstrucaoCivilAtual() + ".\n" +
+                        "A diferença do PIB anterior para o atual seria de - " + diferencaPib + " no PIB.";
+            }
+
+            if (buscarPibConstrucaoCivilAtual() == buscarPibConstrucaoCivilAnterior()) {
+                mensagem = "🚨ALERTA🚨\n" +
+                        "Nenhuma mudança no PIB do setor de Construção Civil, ele se manteve em: " + buscarPibConstrucaoCivilAtual();
+            }
+
             try {
                 String json = "{\"text\": \"" + mensagem + "\"}";
 
