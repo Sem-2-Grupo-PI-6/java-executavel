@@ -51,7 +51,6 @@ public class SlackNotifier {
                         "JOIN tblLogArquivos AS l\n" +
                         "ON l.tblSelic_idtblSelic = s.idtblSelic \n" +
                         "WHERE DATE(dataHoraLeitura) = CURRENT_DATE;", (Double.class));
-        System.out.println(taxaSelicAtual);
         return taxaSelicAtual;
     }
 
@@ -66,7 +65,6 @@ public class SlackNotifier {
                         "JOIN tblLogArquivos AS l\n" +
                         "ON l.tblSelic_idtblSelic = s.idtblSelic \n" +
                         "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
-        System.out.println(taxaSelicAnterior);
         return taxaSelicAnterior;
     }
 
@@ -76,7 +74,6 @@ public class SlackNotifier {
                         "JOIN tblLogArquivos AS l\n" +
                         "ON l.tblSelic_idtblSelic = p.idtblPibRegionalSP\n" +
                         "WHERE DATE(dataHoraLeitura) = CURRENT_DATE;", (Double.class));
-        System.out.println(pibConstrucaoCivilAtual);
         return pibConstrucaoCivilAtual;
     }
 
@@ -91,7 +88,6 @@ public class SlackNotifier {
                         "JOIN tblLogArquivos AS l\n" +
                         "ON l.tblSelic_idtblSelic = p.idtblPibRegionalSP\n" +
                         "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
-        System.out.println(pibConstrucaoCivilAnterior);
         return pibConstrucaoCivilAnterior;
     }
 
@@ -160,7 +156,28 @@ public class SlackNotifier {
             }
         }
 
+        Double diferencaSelic = null;
         if (notificacaoAumentoSelic == 1) {
+
+            if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior()) {
+                diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnterior();
+                mensagem = "🚨ALERTA🚨\n" +
+                        "A taxa Selic aumentou de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
+                        "A diferença da taxa Selic anterior para a atual seria de + " + diferencaSelic + " na taxa.";
+            }
+
+            if (buscarTaxaSelicAtual() < buscarTaxaSelicAnterior()) {
+                diferencaSelic = buscarTaxaSelicAnterior() - buscarTaxaSelicAtual();
+                mensagem = "🚨ALERTA🚨\n" +
+                        "A taxa Selic diminuiu de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
+                        "A diferença da taxa Selic anterior para a atual seria de - " + diferencaSelic + " na taxa.";
+            }
+
+            if (buscarTaxaSelicAtual() == buscarTaxaSelicAnterior()) {
+                mensagem = "🚨ALERTA🚨\n" +
+                        "Nenhuma mudança na taxa Selic, ela se manteve em: " + buscarTaxaSelicAtual();
+            }
+
             try {
                 String json = "{\"text\": \"" + mensagem + "\"}";
 
