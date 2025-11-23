@@ -374,12 +374,14 @@ public class LerPersistirDados {
                     municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                    System.out.println("ano: " + anoCerto +" mun: "+ municipio);
+                    Integer zona = getZonaId(municipio);
+
+                    if(zona != 1) zona = 5;
 
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                            razaoSexo, idadeMedia, densidadeDemografico, 5
+                            razaoSexo, idadeMedia, densidadeDemografico, zona
                     );
 
                     List<Populacao> pop = jdbcTemplate.query(
@@ -393,8 +395,8 @@ public class LerPersistirDados {
                             "Os registros foram inseridos na tabela de populcao",
                             pop.getFirst().getIdtblPopulacao()
                     );
-
                     count++;
+                    System.out.println("dados da tabela populacao inseridos com sucesso");
                 } catch (Exception e) {
                     jdbcTemplate.update(
                             "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
@@ -463,7 +465,7 @@ public class LerPersistirDados {
             throw new RuntimeException("[" + timestamp + "] Erro inesperado: " + e.getMessage(), e);
     }
 
-    private int getZonaId(String municipio) {
+    private Integer getZonaId(String municipio) {
         List<String> zonaLeste = List.of(
                 "aruja",
                 "biritiba-mirim",
@@ -506,14 +508,18 @@ public class LerPersistirDados {
                 "vargem grande paulista"
         );
 
-        List<String> zonaSudeste = List.of(
+        List<String> zonaSul = List.of(
                 "diadema",
+                "embu das artes",
+                "embu-guacu",
+                "itapecerica da serra",
+                "juquitiba",
                 "maua",
                 "ribeirao pires",
                 "rio grande da serra",
                 "santo andre",
-                "são bernardo do campo",
-                "são caetano do sul"
+                "sao bernardo do campo",
+                "sao caetano do sul"
         );
 
 
@@ -524,10 +530,10 @@ public class LerPersistirDados {
             System.out.println(" =========> "+ municipio + " pertence a zona norte");
             return 2;
         } else if (zonaOeste.contains(municipio)) {
-            System.out.println(" =========> "+ municipio + " pertence a zona norte");
+            System.out.println(" =========> "+ municipio + " pertence a zona oeste");
             return 3;
-        } else if (zonaSudeste.contains(municipio)) {
-            System.out.println(" =========> "+ municipio + " pertence a zona norte");
+        } else if (zonaSul.contains(municipio)) {
+            System.out.println(" =========> "+ municipio + " pertence a zona sul");
             return 4;
         }
 
