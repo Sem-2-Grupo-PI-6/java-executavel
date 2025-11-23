@@ -379,7 +379,7 @@ public class LerPersistirDados {
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                            razaoSexo, idadeMedia, densidadeDemografico
+                            razaoSexo, idadeMedia, densidadeDemografico, 5
                     );
 
                     List<Populacao> pop = jdbcTemplate.query(
