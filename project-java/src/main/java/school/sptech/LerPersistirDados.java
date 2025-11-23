@@ -523,11 +523,17 @@ public class LerPersistirDados {
 
 
         if(zonaLeste.contains(municipio)){
-            System.out.println(municipio + "pertence a zona leste");
+            System.out.println(" =========> "+ municipio + " pertence a zona leste");
             return 1;
         } else if (zonaNorte.contains(municipio)) {
-            System.out.println(municipio + "pertence a zona norte");
+            System.out.println(" =========> "+ municipio + " pertence a zona norte");
             return 2;
+        } else if (zonaOeste.contains(municipio)) {
+            System.out.println(" =========> "+ municipio + " pertence a zona norte");
+            return 3;
+        } else if (zonaSudeste.contains(municipio)) {
+            System.out.println(" =========> "+ municipio + " pertence a zona norte");
+            return 4;
         }
 
         System.out.println("sem pertencer a zona leste");
