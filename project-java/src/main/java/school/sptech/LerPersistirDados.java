@@ -23,7 +23,7 @@ public class LerPersistirDados {
 
     private final Conexao conexao = new Conexao();
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(conexao.getConexao());
-    private final String bucketName = "s3-sixtech";
+    private final String bucketName = "sixtech-s3";
     private final Region region = Region.US_EAST_1;
     private final S3Client s3Client;
 
