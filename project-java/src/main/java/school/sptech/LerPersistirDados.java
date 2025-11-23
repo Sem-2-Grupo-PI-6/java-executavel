@@ -375,8 +375,7 @@ public class LerPersistirDados {
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
                     Integer zona = getZonaId(municipio);
-
-                    if(zona != 1) zona = 5;
+                    
 
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -526,13 +525,16 @@ public class LerPersistirDados {
         if(zonaLeste.contains(municipio)){
             System.out.println(" =========> "+ municipio + " pertence a zona leste");
             return 1;
-        } else if (zonaNorte.contains(municipio)) {
+        }
+        if (zonaNorte.contains(municipio)) {
             System.out.println(" =========> "+ municipio + " pertence a zona norte");
             return 2;
-        } else if (zonaOeste.contains(municipio)) {
+        }
+        if (zonaOeste.contains(municipio)) {
             System.out.println(" =========> "+ municipio + " pertence a zona oeste");
             return 3;
-        } else if (zonaSul.contains(municipio)) {
+        }
+        if (zonaSul.contains(municipio)) {
             System.out.println(" =========> "+ municipio + " pertence a zona sul");
             return 4;
         }
