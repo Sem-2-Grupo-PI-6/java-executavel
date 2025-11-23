@@ -23,7 +23,7 @@ public class LerPersistirDados {
 
     private final Conexao conexao = new Conexao();
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(conexao.getConexao());
-    private final String bucketName = "sixtech-s3";
+    private final String bucketName = "s3-sixtech";
     private final Region region = Region.US_EAST_1;
     private final S3Client s3Client;
 
@@ -417,6 +417,32 @@ public class LerPersistirDados {
         }
     }
 
+    public void inserirDadosZona(String key) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        System.out.println("[" + timestamp + "] ⏳ Lendo XLSX: " + key);
+
+        try (InputStream inputStream = baixarArquivo(key);
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            int count = 0;
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                Cell cNome = row.getCell(0);
+                if (cNome == null) continue;
+
+                String nome = cNome.toString();
+                jdbcTemplate.update("INSERT INTO zona (nome) VALUES (?)", nome);
+                count++;
+            }
+
+            System.out.println("[" + timestamp + "] Inserção de " + count + " zonas concluída!");
+        } catch (Exception e) {
+            tratarErro(e, timestamp);
+        }
+    }
+
     private InputStream baixarArquivo(String key) throws IOException {
         System.out.println("Baixando do S3: " + bucketName + "/" + key);
         GetObjectRequest request = GetObjectRequest.builder()
@@ -496,9 +522,16 @@ public class LerPersistirDados {
         );
 
 
-        if(zonaLeste.contains(municipio)) return 1;
+        if(zonaLeste.contains(municipio)){
+            System.out.println(municipio + "pertence a zona leste");
+            return 1;
+        } else if (zonaNorte.contains(municipio)) {
+            System.out.println(municipio + "pertence a zona norte");
+            return 2;
+        }
 
-        return 0;
+        System.out.println("sem pertencer a zona leste");
+        return 5;
     }
 
     public void fecharS3() {
