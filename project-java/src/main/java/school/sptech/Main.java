@@ -14,7 +14,7 @@ public class Main {
         LerPersistirDados persistirDados = new LerPersistirDados();
 
         persistirDados.inserirDadosInflacao("inflacao.xlsx");
-        persistirDados.inserirDadosSelic("selic.xlsx");
+        persistirDados.inserirDadosSelic("selic.xls");
         persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
         persistirDados.inserirDadosPibSetor("2t2025_tabelas_site-pib-trimestral.xlsx");
         persistirDados.inserirDadosPibRegionalSP("sp_pib.xlsx");
