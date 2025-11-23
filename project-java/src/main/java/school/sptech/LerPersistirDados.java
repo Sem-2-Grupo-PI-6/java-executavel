@@ -375,7 +375,7 @@ public class LerPersistirDados {
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
                     Integer zona = getZonaId(municipio);
-                    
+
 
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
