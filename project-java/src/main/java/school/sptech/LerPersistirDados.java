@@ -374,7 +374,7 @@ public class LerPersistirDados {
                     municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                    System.out.println(municipio);
+                    System.out.println("ano: " + anoCerto +" mun: "+ municipio);
 
                     Integer zona = getZonaId(municipio);
 
@@ -399,7 +399,6 @@ public class LerPersistirDados {
                     );
 
                     count++;
-                    System.out.println("dados da tabela populacao inseridos com sucesso");
                 } catch (Exception e) {
                     jdbcTemplate.update(
                             "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
