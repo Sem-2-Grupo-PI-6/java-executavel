@@ -12,7 +12,7 @@ public class Conexao {
 
         driver.setUrl("jdbc:mysql://localhost:3306/sixtech?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC");
         driver.setUsername("root");
-        driver.setPassword("Kcaio121922032521!");
+        driver.setPassword("");
         driver.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
         this.conexao = driver;

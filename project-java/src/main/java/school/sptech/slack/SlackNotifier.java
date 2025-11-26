@@ -67,6 +67,19 @@ public class SlackNotifier {
                         "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
         return taxaSelicAnterior;
     }
+    public Double buscarTaxaSelicAnteAnterior() {
+        LocalDate dataAtual = jdbcTemplate
+                .queryForObject("SELECT DATE(dataHoraLeitura) FROM tblLogArquivos ORDER BY dataHoraLeitura DESC LIMIT 1;", (LocalDate.class));
+
+        LocalDate dataAnterior = dataAtual.minusDays(2);
+
+        Double taxaSelicAnterior = jdbcTemplate
+                .queryForObject("SELECT valorTaxa FROM tblSelic AS s\n" +
+                        "JOIN tblLogArquivos AS l\n" +
+                        "ON l.tblSelic_idtblSelic = s.idtblSelic \n" +
+                        "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
+        return taxaSelicAnterior;
+    }
 
     public Double buscarPibConstrucaoCivilAtual() {
         Double pibConstrucaoCivilAtual = jdbcTemplate
@@ -158,8 +171,12 @@ public class SlackNotifier {
 
         Double diferencaSelic = null;
         if (notificacaoAumentoSelic == 1) {
-
-            if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior()) {
+            if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior() && buscarTaxaSelicAnterior() > buscarTaxaSelicAnteAnterior()) {
+                diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnteAnterior();
+                mensagem = "🚨ALERTA🚨\n" +
+                        "A taxa Selic aumentou de " + buscarTaxaSelicAnteAnterior() + " para " + buscarTaxaSelicAnterior() + "e depois para " + buscarTaxaSelicAtual() + ".\n" +
+                        "A diferença da taxa Selic dos ultimos dois dias para a atual seria de + " + diferencaSelic + " na taxa.";
+            }else if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior()) {
                 diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnterior();
                 mensagem = "🚨ALERTA🚨\n" +
                         "A taxa Selic aumentou de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
@@ -232,4 +249,34 @@ public class SlackNotifier {
             }
         }
     }
+//    create
+//    update
+//    read
+//    delete
+//    public Boolean buscarAumentoRepentinoPib(){
+//        Double ultimaTaxaSelic = jdbcTemplate
+//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao = (SELECT MAX(dtApuracao) FROM tblSelic);",
+//                        (Double.class));
+//        String ultimaDataTaxaSelic = String.valueOf(jdbcTemplate
+//                .queryForObject("SELECT dtApuracao FROM tblSelic WHERE dtApuracao = (SELECT MAX(dtApuracao) FROM tblSelic);",
+//                        (Double.class)));
+//        Double taxaDiaAnterior = jdbcTemplate
+//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
+//                        (Double.class), ultimaDataTaxaSelic);
+//
+//        String dataDiaAnterior = String.valueOf(jdbcTemplate
+//                .queryForObject("SELECT dtApuracao FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
+//                        (Double.class), ultimaDataTaxaSelic));
+//
+//        Double taxaDoisDiasAntes = jdbcTemplate
+//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
+//                        (Double.class), dataDiaAnterior);
+//
+//
+//        if(ultimaTaxaSelic > taxaDiaAnterior && taxaDiaAnterior > taxaDoisDiasAntes){
+//            return true;
+//        }
+//        return false;
+//    }
+
 }
