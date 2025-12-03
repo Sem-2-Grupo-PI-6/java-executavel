@@ -212,7 +212,7 @@ public class SlackNotifier {
         }
 
         Double diferencaPib = null;
-        if (notificacaoCrescimentoPib == 0) {
+        if (notificacaoCrescimentoPib == 1) {
 
             if (buscarPibConstrucaoCivilAtual() > buscarPibConstrucaoCivilAnterior()) {
                 diferencaPib = buscarPibConstrucaoCivilAtual() - buscarPibConstrucaoCivilAnterior();
@@ -249,34 +249,4 @@ public class SlackNotifier {
             }
         }
     }
-//    create
-//    update
-//    read
-//    delete
-//    public Boolean buscarAumentoRepentinoPib(){
-//        Double ultimaTaxaSelic = jdbcTemplate
-//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao = (SELECT MAX(dtApuracao) FROM tblSelic);",
-//                        (Double.class));
-//        String ultimaDataTaxaSelic = String.valueOf(jdbcTemplate
-//                .queryForObject("SELECT dtApuracao FROM tblSelic WHERE dtApuracao = (SELECT MAX(dtApuracao) FROM tblSelic);",
-//                        (Double.class)));
-//        Double taxaDiaAnterior = jdbcTemplate
-//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
-//                        (Double.class), ultimaDataTaxaSelic);
-//
-//        String dataDiaAnterior = String.valueOf(jdbcTemplate
-//                .queryForObject("SELECT dtApuracao FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
-//                        (Double.class), ultimaDataTaxaSelic));
-//
-//        Double taxaDoisDiasAntes = jdbcTemplate
-//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
-//                        (Double.class), dataDiaAnterior);
-//
-//
-//        if(ultimaTaxaSelic > taxaDiaAnterior && taxaDiaAnterior > taxaDoisDiasAntes){
-//            return true;
-//        }
-//        return false;
-//    }
-
 }
