@@ -33,11 +33,7 @@ public class Main {
         // Slack
         SlackNotifier slack = new SlackNotifier();
 
-        slack.buscarZonaPorMaiorQtdPopulacao();
-        slack.enviar("🚨ALERTA🚨");
-        slack.buscarTaxaSelicAtual();
-        slack.buscarTaxaSelicAnterior();
-        slack.buscarPibConstrucaoCivilAtual();
-        slack.buscarPibConstrucaoCivilAnterior();
+        slack.enviar();
+
     }
 }
