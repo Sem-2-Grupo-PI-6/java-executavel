@@ -23,7 +23,7 @@ public class LerPersistirDados {
 
     private final Conexao conexao = new Conexao();
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(conexao.getConexao());
-    private final String bucketName = "s3-sixtech";
+    private final String bucketName = "sixtech-s3";
     private final Region region = Region.US_EAST_1;
     private final S3Client s3Client;
 
@@ -146,6 +146,66 @@ public class LerPersistirDados {
             tratarErro(e, timestamp);
         }
     }
+
+    public void inserirDadosPibRegionalSP(String key) {
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        System.out.println("[" + timestamp + "] ⏳ Iniciando leitura do arquivo XLSX: " + key);
+
+        try (InputStream inputStream = baixarArquivo(key);
+             Workbook workbook = new XSSFWorkbook(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+            int count = 0;
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                Cell cAno = row.getCell(0);
+                Cell cValor = row.getCell(1);
+
+                if (cAno == null || cValor == null) continue;
+
+                try {
+                    String ano = cAno.toString().trim();
+                    String[] partes = ano.split("\\.");
+                    String anoCerto = partes[0];
+                    Double pibSp = Double.parseDouble(cValor.toString().replace(",", "."));
+
+                    System.out.println(anoCerto + " " + pibSp);
+                    jdbcTemplate.update("INSERT INTO tblPibRegionalSP (ano, pibSP) VALUES (?, ?)",
+                            anoCerto, pibSp);
+
+                    List<PibRegionalSP> pib = jdbcTemplate.query(
+                            "SELECT * FROM tblPibRegionalSP ORDER BY idtblPibRegionalSP DESC LIMIT 1",
+                            new BeanPropertyRowMapper<>(PibRegionalSP.class)
+                    );
+                    System.out.println(pib.getFirst().getIdtblPibRegionalSP());
+
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPibRegionalSP_idtblPibRegionalSP) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros " + ano + " | " + pibSp + " foram inseridos na tabela PibRegionalSP",
+                            pib.getFirst().getIdtblPibRegionalSP()
+                    );
+
+                    count++;
+                    System.out.println("Os dados inseridos: " + anoCerto  + "e" + pibSp);
+
+                } catch (Exception e) {
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela PibRegionalSP, erro: " + e.getMessage()
+                    );
+                    System.err.println("Erro na linha " + row.getRowNum() + ": " + e.getMessage());
+                }
+            }
+
+            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " registros de SELIC concluída!");
+        } catch (Exception e) {
+            tratarErro(e, timestamp);
+        }
+    }
+
     public void inserirDadosPibSetor(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.out.println("[" + timestamp + "] ⏳ Lendo XLSX: " + key);
@@ -299,6 +359,9 @@ public class LerPersistirDados {
 
                 try {
                     String ano = row.getCell(0).toString();
+                    String[] partes = ano.split("\\.");
+                    String anoCerto = partes[0];
+
                     String codigoIbge = row.getCell(1).toString();
                     String municipio = row.getCell(2).toString().trim().toLowerCase();
                     int qtdPopulacao = (int) Double.parseDouble(row.getCell(3).toString());
@@ -311,28 +374,33 @@ public class LerPersistirDados {
                     municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                    int idZona = getZonaId(municipio);
-                    if (idZona == 0) continue;
+                    Integer zona = getZonaId(municipio);
 
                     jdbcTemplate.update(
-                            "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                            ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
-                            razaoSexo, idadeMedia, densidadeDemografico, idZona
+                            "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
+                            razaoSexo, idadeMedia, densidadeDemografico, zona
                     );
 
                     List<Populacao> pop = jdbcTemplate.query(
-                            "SELECT * FROM populacao ORDER BY id DESC LIMIT 1",
+                            "SELECT * FROM tblPopulacao ORDER BY idtblPopulacao DESC LIMIT 1",
                             new BeanPropertyRowMapper<>(Populacao.class)
                     );
 
                     jdbcTemplate.update(
-                            "INSERT INTO logPopulacao (idPopulacao, descricao) VALUES (?, ?)",
-                            pop.get(0).getId(),
-                            "Registro de população (" + municipio + ") inserido com sucesso."
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao, tblPopulacao_idtblPopulacao) VALUES (?, ?, ?)",
+                            "INFO",
+                            "Os registros foram inseridos na tabela de populcao",
+                            pop.getFirst().getIdtblPopulacao()
                     );
-
                     count++;
+                    System.out.println("dados da tabela populacao inseridos com sucesso");
                 } catch (Exception e) {
+                    jdbcTemplate.update(
+                            "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
+                            "ERROR",
+                            "Erro a o tentar e inserir dados na tabela de populacao erro: " + e.getMessage()
+                    );
                     System.err.println("Erro linha " + row.getRowNum() + ": " + e.getMessage());
                 }
                 total++;
@@ -364,14 +432,14 @@ public class LerPersistirDados {
                 count++;
             }
 
-            System.out.println("[" + timestamp + "] ✅ Inserção de " + count + " zonas concluída!");
+            System.out.println("[" + timestamp + "] Inserção de " + count + " zonas concluída!");
         } catch (Exception e) {
             tratarErro(e, timestamp);
         }
     }
 
     private InputStream baixarArquivo(String key) throws IOException {
-        System.out.println("📦 Baixando do S3: " + bucketName + "/" + key);
+        System.out.println("Baixando do S3: " + bucketName + "/" + key);
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -379,10 +447,10 @@ public class LerPersistirDados {
 
         try {
             ResponseInputStream<GetObjectResponse> response = s3Client.getObject(request);
-            System.out.println("✅ Arquivo XLSX carregado com sucesso!");
+            System.out.println("Arquivo carregado");
             return response;
         } catch (S3Exception e) {
-            throw new IOException("Erro ao baixar do S3: " + e.awsErrorDetails().errorMessage(), e);
+            throw new IOException("erro ao baixar do s3: " + e.awsErrorDetails().errorMessage(), e);
         }
     }
 
@@ -395,17 +463,83 @@ public class LerPersistirDados {
             throw new RuntimeException("[" + timestamp + "] Erro inesperado: " + e.getMessage(), e);
     }
 
-    private int getZonaId(String municipio) {
-        List<String> zonaLeste = List.of("sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes", "sao miguel paulista", "ermelino matarazzo", "tatuape", "aricanduva", "guilhermina esperanca");
-        List<String> zonaSul = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos", "vila mariana", "vila andrade", "jabaquara", "campo belo");
-        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
-        List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina", "pirituba", "pompeia", "alto da lapa", "sumare");
+    private Integer getZonaId(String municipio) {
+        List<String> zonaLeste = List.of(
+                "aruja",
+                "biritiba-mirim",
+                "ferraz de vasconcelos",
+                "guararema",
+                "guarulhos",
+                "itaquaquecetuba",
+                "mogi das cruzes",
+                "poa",
+                "salesopolis",
+                "santa isabel",
+                "suzano"
+        );
 
-        if (zonaLeste.contains(municipio)) return 1;
-        if (zonaSul.contains(municipio)) return 2;
-        if (zonaNorte.contains(municipio)) return 3;
-        if (zonaOeste.contains(municipio)) return 4;
-        return 0;
+        List<String> zonaNorte = List.of(
+                "caieiras",
+                "cajamar",
+                "francisco morato",
+                "franco da rocha",
+                "mairipora"
+        );
+
+        List<String> zonaOeste = List.of(
+                "barueri",
+                "carapicuiba",
+                "itapevi",
+                "jandira",
+                "osasco",
+                "pirapora do bom jesus"
+        );
+
+        List<String> zonaSudoeste = List.of(
+                "cotia",
+                "embu das artes",
+                "embu-guaçu",
+                "itapecerica da serra",
+                "juquitiba",
+                "são lourenco da serra",
+                "taboao da serra",
+                "vargem grande paulista"
+        );
+
+        List<String> zonaSul = List.of(
+                "diadema",
+                "embu das artes",
+                "embu-guacu",
+                "itapecerica da serra",
+                "juquitiba",
+                "maua",
+                "ribeirao pires",
+                "rio grande da serra",
+                "santo andre",
+                "sao bernardo do campo",
+                "sao caetano do sul"
+        );
+
+
+        if(zonaLeste.contains(municipio)){
+            System.out.println(" =========> "+ municipio + " pertence a zona leste");
+            return 1;
+        }
+        if (zonaNorte.contains(municipio)) {
+            System.out.println(" =========> "+ municipio + " pertence a zona norte");
+            return 2;
+        }
+        if (zonaOeste.contains(municipio)) {
+            System.out.println(" =========> "+ municipio + " pertence a zona oeste");
+            return 3;
+        }
+        if (zonaSul.contains(municipio)) {
+            System.out.println(" =========> "+ municipio + " pertence a zona sul");
+            return 4;
+        }
+
+        System.out.println("sem pertencer a zona leste");
+        return 5;
     }
 
     public void fecharS3() {

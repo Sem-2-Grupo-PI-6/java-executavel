@@ -1,17 +1,17 @@
 package school.sptech;
 
 public class PibSetor {
-    private Double idtblPibSetor;
+    private Integer idtblPibSetor;
     private String trimestre;
     private String ano;
     private Double construcaoCivil;
     private Double servico;
 
-    public Double getIdtblPibSetor() {
+    public Integer getIdtblPibSetor() {
         return idtblPibSetor;
     }
 
-    public void setIdtblPibSetor(Double idtblPibSetor) {
+    public void setIdtblPibSetor(Integer idtblPibSetor) {
         this.idtblPibSetor = idtblPibSetor;
     }
 
