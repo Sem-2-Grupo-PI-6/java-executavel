@@ -56,8 +56,6 @@ public class LerPersistirDados {
                     String valor = cValor.toString().replace(",", ".");
                     Double taxaApuracao = Double.parseDouble(valor);
 
-
-
                     jdbcTemplate.update("INSERT INTO tblInflacao (valorTaxa, dtApuracao) VALUES (?, ?)",
                             taxaApuracao, dataApuracao);
 
@@ -236,7 +234,6 @@ public class LerPersistirDados {
                     String valorServicoToalTexto = formatter.formatCellValue(cellServicoTotal).trim().replace(",", "");
                     Double valorRealServicoTotal = Double.parseDouble(valorServicoToalTexto);
 
-
                     jdbcTemplate.update(
                             "INSERT INTO tblPibSetor (trimestre, ano, construcaoCivil, servico) VALUES (?, ?, ?, ?)",
                             trimestre,
@@ -277,9 +274,6 @@ public class LerPersistirDados {
             throw new RuntimeException("Erro ao processar XLSX: " + e.getMessage(), e);
         }
     }
-
-
-
 
     public void inserirDadosPib(String key) {
         String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
