@@ -107,31 +107,19 @@ public class SlackNotifier {
     public void enviar(String mensagem) {
 
         Integer receberNotificacao = jdbcTemplate.queryForObject(
-                "SELECT receberNotificacao FROM tblUsuario;", (Integer.class));
+                "SELECT receberNotificacao FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoMaiorPopulacao = jdbcTemplate.queryForObject(
-                "SELECT maiorPopulacao FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT maiorPopulacao FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAumentoSelic = jdbcTemplate.queryForObject(
-                "SELECT aumentoSelic FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT aumentoSelic FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoCrescimentoPib = jdbcTemplate.queryForObject(
-                "SELECT crescimentoPib FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT crescimentoPib FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAlertaError = jdbcTemplate.queryForObject(
-                "SELECT alertaError FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT alertaError FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAlertaWarning = jdbcTemplate.queryForObject(
-                "SELECT alertaWarning FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT alertaWarning FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAlertaInfo = jdbcTemplate.queryForObject(
-                "SELECT alertaInfo FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT alertaInfo FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
 
         if (receberNotificacao == 1) {
             try {
