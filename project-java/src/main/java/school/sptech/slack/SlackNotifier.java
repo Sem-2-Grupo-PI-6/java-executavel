@@ -108,17 +108,15 @@ public class SlackNotifier {
 
     public List<String> buscarAlertaError() {
         List<String> listaAlertaError = jdbcTemplate.queryForList(
-                "SELECT descricao FROM tblLogArquivos WHERE tipoLog = 'ERROR';",
-                String.class
-        );
-
-        System.out.println(" ==========> "+  listaAlertaError);
+                "SELECT descricao FROM tblLogArquivos WHERE tipoLog = 'ERROR';", String.class);
         return listaAlertaError;
     }
 
     public Integer buscarQtdAlertaError() {
         return buscarAlertaError().size();
     }
+
+
 
     public List<String> buscarAlertaWarning() {
         List<String> alertaWarning = jdbcTemplate.queryForList(
@@ -275,6 +273,7 @@ public class SlackNotifier {
 
             if (notificacaoAlertaError == 1) {
 
+                System.out.println("=====>  entrou error");
                 if (buscarQtdAlertaError() == 0) {
                     mensagem = "❌ ALERTA ERROR ❌\n" +
                             "Nenhum alerta do tipo ERROR ocorreu.";
@@ -293,9 +292,9 @@ public class SlackNotifier {
                         e.printStackTrace();
                     }
                 } else {
-
+                    System.out.println("=====>  entrou error else");
                     mensagem = "❌ ALERTA ERROR ❌\n" +
-                            "Foram identificados " + buscarQtdAlertaError() + " alertas do tipo ERROR, sendo eles:  " + buscarAlertaError();
+                            "Foram identificados " + buscarQtdAlertaError() + " alertas do tipo ERROR.";
                     try {
                         String json = "{\"text\": \"" + mensagem + "\"}";
 
@@ -336,7 +335,7 @@ public class SlackNotifier {
                 } else {
 
                     mensagem = "⚠️ ALERTA WARNING ⚠️\n" +
-                            "Foram identificados " + buscarQtdAlertaWarning() + " alertas do tipo WARNING, sendo eles:  " + buscarAlertaWarning();
+                            "Foram identificados " + buscarQtdAlertaWarning() + " alertas do tipo WARNING.";
                     try {
                         String json = "{\"text\": \"" + mensagem + "\"}";
 
