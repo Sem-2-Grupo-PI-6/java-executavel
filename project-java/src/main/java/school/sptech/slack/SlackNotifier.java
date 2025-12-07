@@ -273,7 +273,6 @@ public class SlackNotifier {
 
             if (notificacaoAlertaError == 1) {
 
-                System.out.println("=====>  entrou error");
                 if (buscarQtdAlertaError() == 0) {
                     mensagem = "❌ ALERTA ERROR ❌\n" +
                             "Nenhum alerta do tipo ERROR ocorreu.";
@@ -292,7 +291,6 @@ public class SlackNotifier {
                         e.printStackTrace();
                     }
                 } else {
-                    System.out.println("=====>  entrou error else");
                     mensagem = "❌ ALERTA ERROR ❌\n" +
                             "Foram identificados " + buscarQtdAlertaError() + " alertas do tipo ERROR.";
                     try {
@@ -312,7 +310,7 @@ public class SlackNotifier {
                 }
             }
 
-            if (notificacaoAlertaWarning == 0) {
+            if (notificacaoAlertaWarning == 1) {
 
                 if (buscarQtdAlertaWarning() == 0) {
                     mensagem = "⚠️ ALERTA WARNING ⚠️\n" +
@@ -353,7 +351,7 @@ public class SlackNotifier {
                 }
             }
 
-            if (notificacaoAlertaInfo == 0) {
+            if (notificacaoAlertaInfo == 1) {
 
                 if (buscarQtdAlertaInfo() == 0) {
                     mensagem = "ℹ️ ALERTA INFO ℹ️\n" +
