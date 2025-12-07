@@ -51,7 +51,7 @@ public class SlackNotifier {
                 .queryForObject("SELECT valorTaxa FROM tblSelic AS s\n" +
                         "JOIN tblLogArquivos AS l\n" +
                         "ON l.tblSelic_idtblSelic = s.idtblSelic \n" +
-                        "WHERE DATE(dataHoraLeitura) = CURRENT_DATE;", (Double.class));
+                        "WHERE DATE(dataHoraLeitura) = CURRENT_DATE LIMIT 1;", (Double.class));
         return taxaSelicAtual;
     }
 
