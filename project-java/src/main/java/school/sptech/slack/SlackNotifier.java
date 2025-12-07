@@ -111,6 +111,8 @@ public class SlackNotifier {
                 "SELECT descricao FROM tblLogArquivos WHERE tipoLog = 'ERROR';",
                 String.class
         );
+
+        System.out.println(" ==========> "+  listaAlertaError);
         return listaAlertaError;
     }
 
@@ -374,7 +376,7 @@ public class SlackNotifier {
                 } else {
 
                     mensagem = "ℹ️ ALERTA INFO ℹ️\n" +
-                            "Foram identificados " + buscarQtdAlertaInfo() + " alertas do tipo INFO, sendo eles:  " + buscarAlertaInfo();
+                            "Foram identificados " + buscarQtdAlertaInfo() + " alertas do tipo INFO.";
                     try {
                         String json = "{\"text\": \"" + mensagem + "\"}";
 
