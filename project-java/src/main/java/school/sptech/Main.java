@@ -36,6 +36,7 @@ public class Main {
         // Slack
         SlackNotifier slack = new SlackNotifier();
 
+        System.out.println("=======================================================> chamando metodo do slack");
         slack.enviar();
 
     }
