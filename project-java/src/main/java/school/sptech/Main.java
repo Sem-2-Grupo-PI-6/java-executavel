@@ -1,15 +1,6 @@
 package school.sptech;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import school.sptech.slack.SlackNotifier;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.sql.Connection;
-import java.time.Duration;
-import java.util.List;
 
 
 public class Main {
