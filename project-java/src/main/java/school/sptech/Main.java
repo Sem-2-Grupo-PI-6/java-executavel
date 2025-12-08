@@ -24,6 +24,7 @@ public class Main {
             e.printStackTrace();
         }
 
+
         LerPersistirDados persistirDados = new LerPersistirDados();
 
         persistirDados.inserirDadosInflacao("inflacao.xlsx");
