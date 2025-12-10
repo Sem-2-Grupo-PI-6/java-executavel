@@ -17,11 +17,11 @@ public class SlackNotifier {
     private final String webhookAlerta = jdbcTemplate.queryForObject(
             "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'alertas';", (String.class));
     private final String webhookMaiorPopulacao = jdbcTemplate.queryForObject(
-            "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'notificação-zona-com-maior-quantidade-população';", (String.class));
+            "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'notificacao-zona-com-maior-quantidade-populacao';", (String.class));
     private final String webhookAumentoSelic = jdbcTemplate.queryForObject(
-            "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'notificação-aumento-taxa-selic';", (String.class));
+            "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'notificacao-aumento-taxa-selic';", (String.class));
     private final String webhookCrescimentoPib = jdbcTemplate.queryForObject(
-            "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'notificação-crescimento-pib';", (String.class));
+            "SELECT webhook FROM tblCanalWebhook WHERE nomeCanal = 'notificacao-crescimento-pib';", (String.class));
 
     public SlackNotifier() {
         try (Connection conn = conexao.getConexao().getConnection()) {
