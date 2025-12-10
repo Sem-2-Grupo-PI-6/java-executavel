@@ -19,13 +19,17 @@ import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class LerPersistirDados {
+public  class LerPersistirDados extends Conexao {
 
-    private final Conexao conexao = new Conexao();
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(conexao.getConexao());
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate(getConexao());
     private final String bucketName = "s3-sixtech";
     private final Region region = Region.US_EAST_1;
     private final S3Client s3Client;
+    private List<enumZona> enumZona;
+
+    public LerPersistirDados(S3Client s3Client) {
+        this.s3Client = s3Client;
+    }
 
     public LerPersistirDados() {
         this.s3Client = S3Client.builder()
@@ -311,8 +315,8 @@ public class LerPersistirDados {
                     municipio = Normalizer.normalize(municipio, Normalizer.Form.NFD)
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                    int idZona = getZonaId(municipio);
-                    if (idZona == 0) continue;
+                    Integer idZona = getZonaId(municipio);
+//                    if (enumZona.getIdZona() == null || enumZona.getIdZona() == 0) continue;
 
                     jdbcTemplate.update(
                             "INSERT INTO populacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemografico, idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -395,17 +399,17 @@ public class LerPersistirDados {
             throw new RuntimeException("[" + timestamp + "] Erro inesperado: " + e.getMessage(), e);
     }
 
-    private int getZonaId(String municipio) {
+    private Integer getZonaId(String municipio) {
         List<String> zonaLeste = List.of("sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes", "sao miguel paulista", "ermelino matarazzo", "tatuape", "aricanduva", "guilhermina esperanca");
         List<String> zonaSul = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos", "vila mariana", "vila andrade", "jabaquara", "campo belo");
         List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
         List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina", "pirituba", "pompeia", "alto da lapa", "sumare");
 
-        if (zonaLeste.contains(municipio)) return 1;
-        if (zonaSul.contains(municipio)) return 2;
-        if (zonaNorte.contains(municipio)) return 3;
-        if (zonaOeste.contains(municipio)) return 4;
-        return 0;
+        if (zonaNorte.contains(municipio)) return enumZona.get(0).getIdZona();
+        else if (zonaLeste.contains(municipio)) return enumZona.get(1).getIdZona();
+        else if (zonaSul.contains(municipio)) return enumZona.get(2).getIdZona();
+        else if (zonaOeste.contains(municipio)) return enumZona.get(3).getIdZona();
+        else return enumZona.get(4).getIdZona();
     }
 
     public void fecharS3() {
