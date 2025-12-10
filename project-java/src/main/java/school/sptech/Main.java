@@ -24,20 +24,16 @@ public class Main {
             e.printStackTrace();
         }
 
-//        LerPersistirDados persistirDados = new LerPersistirDados();
-//
-//        //persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
-//        persistirDados.inserirDadosPibSetor("2t2025_tabelas_site-pib-trimestral.xlsx");
+        LerPersistirDados persistirDados = new LerPersistirDados();
+
+        //persistirDados.inserirDadosPib("2t2025_tabelas_site-pib-trimestral.xlsx");
+        //persistirDados.inserirDadosPibSetor("2t2025_tabelas_site-pib-trimestral.xlsx");
 
 
         // Slack
         SlackNotifier slack = new SlackNotifier();
 
-        slack.buscarZonaPorMaiorQtdPopulacao();
-        slack.enviar("🚨ALERTA🚨");
-        slack.buscarTaxaSelicAtual();
-        slack.buscarTaxaSelicAnterior();
-        slack.buscarPibConstrucaoCivilAtual();
-        slack.buscarPibConstrucaoCivilAnterior();
+        slack.enviar();
+
     }
 }

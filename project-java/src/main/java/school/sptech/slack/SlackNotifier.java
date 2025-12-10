@@ -1,5 +1,6 @@
 package school.sptech.slack;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import school.sptech.Conexao;
 
@@ -67,6 +68,7 @@ public class SlackNotifier {
                         "WHERE DATE(dataHoraLeitura) = ?;", (Double.class), dataAnterior);
         return taxaSelicAnterior;
     }
+
     public Double buscarTaxaSelicAnteAnterior() {
         LocalDate dataAtual = jdbcTemplate
                 .queryForObject("SELECT DATE(dataHoraLeitura) FROM tblLogArquivos ORDER BY dataHoraLeitura DESC LIMIT 1;", (LocalDate.class));
@@ -104,34 +106,54 @@ public class SlackNotifier {
         return pibConstrucaoCivilAnterior;
     }
 
-    public void enviar(String mensagem) {
+    public List<String> buscarAlertaError() {
+        List<String> listaAlertaError = jdbcTemplate.queryForList(
+                "SELECT descricao FROM tblLogArquivos WHERE tipoLog = 'ERROR';",
+                String.class
+        );
+        return listaAlertaError;
+    }
 
+    public Integer buscarQtdAlertaError() {
+        return buscarAlertaError().size();
+    }
+
+    public List<String> buscarAlertaWarning() {
+        List<String> alertaWarning = jdbcTemplate.queryForList(
+                "SELECT descricao FROM tblLogArquivos WHERE tipoLog = 'WARNING';", String.class);
+        return alertaWarning;
+    }
+
+    public Integer buscarQtdAlertaWarning() {
+        return buscarAlertaWarning().size();
+    }
+
+    public List<String> buscarAlertaInfo() {
+        List<String> alertaInfo = jdbcTemplate.queryForList(
+                "SELECT descricao FROM tblLogArquivos WHERE tipoLog = 'INFO';", String.class);
+        return alertaInfo;
+    }
+
+    public Integer buscarQtdAlertaInfo() {
+        return buscarAlertaInfo().size();
+    }
+
+    public void enviar() {
+        String mensagem = "";
         Integer receberNotificacao = jdbcTemplate.queryForObject(
-                "SELECT receberNotificacao FROM tblUsuario;", (Integer.class));
+                "SELECT receberNotificacao FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoMaiorPopulacao = jdbcTemplate.queryForObject(
-                "SELECT maiorPopulacao FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT maiorPopulacao FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAumentoSelic = jdbcTemplate.queryForObject(
-                "SELECT aumentoSelic FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT aumentoSelic FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoCrescimentoPib = jdbcTemplate.queryForObject(
-                "SELECT crescimentoPib FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT crescimentoPib FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAlertaError = jdbcTemplate.queryForObject(
-                "SELECT alertaError FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT alertaError FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAlertaWarning = jdbcTemplate.queryForObject(
-                "SELECT alertaWarning FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT alertaWarning FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
         Integer notificacaoAlertaInfo = jdbcTemplate.queryForObject(
-                "SELECT alertaInfo FROM tblSlack AS s\n" +
-                        "\tJOIN tblUsuario AS u\n" +
-                        "    ON u.fkSlack = s.idSlack;", (Integer.class));
+                "SELECT alertaInfo FROM tblEquipeSlack WHERE nome = 'Equipe SPTech';", (Integer.class));
 
         if (receberNotificacao == 1) {
             try {
@@ -148,135 +170,228 @@ public class SlackNotifier {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
 
-        if (notificacaoMaiorPopulacao == 1) {
-            mensagem = "🚨ALERTA🚨\n" +
-                    "A zona com a maior quantidade de população é: " + buscarZonaPorMaiorQtdPopulacao();
-            try {
-                String json = "{\"text\": \"" + mensagem + "\"}";
 
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(webhookMaiorPopulacao))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(json))
-                        .build();
-
-                HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        Double diferencaSelic = null;
-        if (notificacaoAumentoSelic == 1) {
-            if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior() && buscarTaxaSelicAnterior() > buscarTaxaSelicAnteAnterior()) {
-                diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnteAnterior();
+            if (notificacaoMaiorPopulacao == 1) {
                 mensagem = "🚨ALERTA🚨\n" +
-                        "A taxa Selic aumentou de " + buscarTaxaSelicAnteAnterior() + " para " + buscarTaxaSelicAnterior() + "e depois para " + buscarTaxaSelicAtual() + ".\n" +
-                        "A diferença da taxa Selic dos ultimos dois dias para a atual seria de + " + diferencaSelic + " na taxa.";
-            }else if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior()) {
-                diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnterior();
-                mensagem = "🚨ALERTA🚨\n" +
-                        "A taxa Selic aumentou de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
-                        "A diferença da taxa Selic anterior para a atual seria de + " + diferencaSelic + " na taxa.";
+                        "A zona com a maior quantidade de população é: " + buscarZonaPorMaiorQtdPopulacao();
+                try {
+                    String json = "{\"text\": \"" + mensagem + "\"}";
+
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(webhookMaiorPopulacao))
+                            .header("Content-Type", "application/json")
+                            .POST(HttpRequest.BodyPublishers.ofString(json))
+                            .build();
+
+                    HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
-            if (buscarTaxaSelicAtual() < buscarTaxaSelicAnterior()) {
-                diferencaSelic = buscarTaxaSelicAnterior() - buscarTaxaSelicAtual();
-                mensagem = "🚨ALERTA🚨\n" +
-                        "A taxa Selic diminuiu de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
-                        "A diferença da taxa Selic anterior para a atual seria de - " + diferencaSelic + " na taxa.";
+            Double diferencaSelic = null;
+            if (notificacaoAumentoSelic == 1) {
+                if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior() && buscarTaxaSelicAnterior() > buscarTaxaSelicAnteAnterior()) {
+                    diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnteAnterior();
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "A taxa Selic aumentou de " + buscarTaxaSelicAnteAnterior() + " para " + buscarTaxaSelicAnterior() + "e depois para " + buscarTaxaSelicAtual() + ".\n" +
+                            "A diferença da taxa Selic dos ultimos dois dias para a atual seria de + " + diferencaSelic + " na taxa.";
+                } else if (buscarTaxaSelicAtual() > buscarTaxaSelicAnterior()) {
+                    diferencaSelic = buscarTaxaSelicAtual() - buscarTaxaSelicAnterior();
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "A taxa Selic aumentou de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
+                            "A diferença da taxa Selic anterior para a atual seria de + " + diferencaSelic + " na taxa.";
+                }
+
+                if (buscarTaxaSelicAtual() < buscarTaxaSelicAnterior()) {
+                    diferencaSelic = buscarTaxaSelicAnterior() - buscarTaxaSelicAtual();
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "A taxa Selic diminuiu de " + buscarTaxaSelicAnterior() + " para " + buscarTaxaSelicAtual() + ".\n" +
+                            "A diferença da taxa Selic anterior para a atual seria de - " + diferencaSelic + " na taxa.";
+                }
+
+                if (buscarTaxaSelicAtual() == buscarTaxaSelicAnterior()) {
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "Nenhuma mudança na taxa Selic, ela se manteve em: " + buscarTaxaSelicAtual();
+                }
+
+                try {
+                    String json = "{\"text\": \"" + mensagem + "\"}";
+
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(webhookAumentoSelic))
+                            .header("Content-Type", "application/json")
+                            .POST(HttpRequest.BodyPublishers.ofString(json))
+                            .build();
+
+                    HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
-            if (buscarTaxaSelicAtual() == buscarTaxaSelicAnterior()) {
-                mensagem = "🚨ALERTA🚨\n" +
-                        "Nenhuma mudança na taxa Selic, ela se manteve em: " + buscarTaxaSelicAtual();
+            Double diferencaPib = null;
+            if (notificacaoCrescimentoPib == 1) {
+
+                if (buscarPibConstrucaoCivilAtual() > buscarPibConstrucaoCivilAnterior()) {
+                    diferencaPib = buscarPibConstrucaoCivilAtual() - buscarPibConstrucaoCivilAnterior();
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "O PIB no setor de Construção Civil aumentou de " + buscarPibConstrucaoCivilAnterior() + " para " + buscarPibConstrucaoCivilAtual() + ".\n" +
+                            "A diferença do PIB anterior para o atual seria de + " + diferencaPib + " no PIB.";
+                }
+
+                if (buscarPibConstrucaoCivilAtual() < buscarPibConstrucaoCivilAnterior()) {
+                    diferencaSelic = buscarTaxaSelicAtual() - buscarPibConstrucaoCivilAnterior();
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "O PIB no setor de Construção Civil diminuiu de " + buscarPibConstrucaoCivilAnterior() + " para " + buscarPibConstrucaoCivilAtual() + ".\n" +
+                            "A diferença do PIB anterior para o atual seria de - " + diferencaPib + " no PIB.";
+                }
+
+                if (buscarPibConstrucaoCivilAtual() == buscarPibConstrucaoCivilAnterior()) {
+                    mensagem = "🚨ALERTA🚨\n" +
+                            "Nenhuma mudança no PIB do setor de Construção Civil, ele se manteve em: " + buscarPibConstrucaoCivilAtual();
+                }
+
+                try {
+                    String json = "{\"text\": \"" + mensagem + "\"}";
+
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(webhookCrescimentoPib))
+                            .header("Content-Type", "application/json")
+                            .POST(HttpRequest.BodyPublishers.ofString(json))
+                            .build();
+
+                    HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
-            try {
-                String json = "{\"text\": \"" + mensagem + "\"}";
+            if (notificacaoAlertaError == 1) {
 
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(webhookAumentoSelic))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(json))
-                        .build();
+                if (buscarQtdAlertaError() == 0) {
+                    mensagem = "❌ ALERTA ERROR ❌\n" +
+                            "Nenhum alerta do tipo ERROR ocorreu.";
+                    try {
+                        String json = "{\"text\": \"" + mensagem + "\"}";
 
-                HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(webhookAlerta))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    mensagem = "❌ ALERTA ERROR ❌\n" +
+                            "Foram identificados " + buscarQtdAlertaError() + " alertas do tipo ERROR, sendo eles:  " + buscarAlertaError();
+                    try {
+                        String json = "{\"text\": \"" + mensagem + "\"}";
+
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(webhookAlerta))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
+
+                        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
 
-        Double diferencaPib = null;
-        if (notificacaoCrescimentoPib == 0) {
+            if (notificacaoAlertaWarning == 0) {
 
-            if (buscarPibConstrucaoCivilAtual() > buscarPibConstrucaoCivilAnterior()) {
-                diferencaPib = buscarPibConstrucaoCivilAtual() - buscarPibConstrucaoCivilAnterior();
-                mensagem = "🚨ALERTA🚨\n" +
-                        "O PIB no setor de Construção Civil aumentou de " + buscarPibConstrucaoCivilAnterior() + " para " + buscarPibConstrucaoCivilAtual() + ".\n" +
-                        "A diferença do PIB anterior para o atual seria de + " + diferencaPib + " no PIB.";
+                if (buscarQtdAlertaWarning() == 0) {
+                    mensagem = "⚠️ ALERTA WARNING ⚠️\n" +
+                            "Nenhum alerta do tipo WARNING ocorreu.";
+                    try {
+                        String json = "{\"text\": \"" + mensagem + "\"}";
+
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(webhookAlerta))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
+
+                        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+
+                    mensagem = "⚠️ ALERTA WARNING ⚠️\n" +
+                            "Foram identificados " + buscarQtdAlertaWarning() + " alertas do tipo WARNING, sendo eles:  " + buscarAlertaWarning();
+                    try {
+                        String json = "{\"text\": \"" + mensagem + "\"}";
+
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(webhookAlerta))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
+
+                        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
-            if (buscarPibConstrucaoCivilAtual() < buscarPibConstrucaoCivilAnterior()) {
-                diferencaSelic = buscarTaxaSelicAtual() - buscarPibConstrucaoCivilAnterior();
-                mensagem = "🚨ALERTA🚨\n" +
-                        "O PIB no setor de Construção Civil diminuiu de " + buscarPibConstrucaoCivilAnterior() + " para " + buscarPibConstrucaoCivilAtual() + ".\n" +
-                        "A diferença do PIB anterior para o atual seria de - " + diferencaPib + " no PIB.";
+            if (notificacaoAlertaInfo == 0) {
+
+                if (buscarQtdAlertaInfo() == 0) {
+                    mensagem = "ℹ️ ALERTA INFO ℹ️\n" +
+                            "Nenhum alerta do tipo INFO ocorreu.";
+                    try {
+                        String json = "{\"text\": \"" + mensagem + "\"}";
+
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(webhookAlerta))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
+
+                        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                    mensagem = "ℹ️ ALERTA INFO ℹ️\n" +
+                            "Foram identificados " + buscarQtdAlertaInfo() + " alertas do tipo INFO, sendo eles:  " + buscarAlertaInfo();
+                    try {
+                        String json = "{\"text\": \"" + mensagem + "\"}";
+
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(webhookAlerta))
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(json))
+                                .build();
+
+                        HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
-            if (buscarPibConstrucaoCivilAtual() == buscarPibConstrucaoCivilAnterior()) {
-                mensagem = "🚨ALERTA🚨\n" +
-                        "Nenhuma mudança no PIB do setor de Construção Civil, ele se manteve em: " + buscarPibConstrucaoCivilAtual();
-            }
-
-            try {
-                String json = "{\"text\": \"" + mensagem + "\"}";
-
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(webhookCrescimentoPib))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(json))
-                        .build();
-
-                HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
-//    create
-//    update
-//    read
-//    delete
-//    public Boolean buscarAumentoRepentinoPib(){
-//        Double ultimaTaxaSelic = jdbcTemplate
-//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao = (SELECT MAX(dtApuracao) FROM tblSelic);",
-//                        (Double.class));
-//        String ultimaDataTaxaSelic = String.valueOf(jdbcTemplate
-//                .queryForObject("SELECT dtApuracao FROM tblSelic WHERE dtApuracao = (SELECT MAX(dtApuracao) FROM tblSelic);",
-//                        (Double.class)));
-//        Double taxaDiaAnterior = jdbcTemplate
-//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
-//                        (Double.class), ultimaDataTaxaSelic);
-//
-//        String dataDiaAnterior = String.valueOf(jdbcTemplate
-//                .queryForObject("SELECT dtApuracao FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
-//                        (Double.class), ultimaDataTaxaSelic));
-//
-//        Double taxaDoisDiasAntes = jdbcTemplate
-//                .queryForObject("SELECT valorTaxa FROM tblSelic WHERE dtApuracao < '?' ORDER BY dtApuracao DESC LIMIT 1;",
-//                        (Double.class), dataDiaAnterior);
-//
-//
-//        if(ultimaTaxaSelic > taxaDiaAnterior && taxaDiaAnterior > taxaDoisDiasAntes){
-//            return true;
-//        }
-//        return false;
-//    }
-
 }
