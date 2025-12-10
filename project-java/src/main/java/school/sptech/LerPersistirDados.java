@@ -401,9 +401,6 @@ public class LerPersistirDados {
             }
 
             System.out.println("[" + timestamp + "] ✅ Inserção de " + count + "/" + total + " registros de população concluída!");
-            System.out.println("=======================================================> chamando metodo do slack");
-            SlackNotifier slackNotifier = new SlackNotifier();
-            slackNotifier.enviar();
         } catch (Exception e) {
             tratarErro(e, timestamp);
         }
