@@ -387,7 +387,17 @@ public  class LerPersistirDados extends Conexao {
                             pop.getFirst().getIdtblPopulacao()
                     );
                     count++;
-                    System.out.println("dados da tabela populacao inseridos com sucesso");
+                    if(idZona == 1){
+                        System.out.println("Municipio da Zona Norte inserido com sucesso!");
+                    } else if (idZona == 2) {
+                        System.out.println("Municipio da Zona Leste inserido com sucesso!");
+                    }else if (idZona == 3) {
+                        System.out.println("Municipio da Zona Leste inserido com sucesso!");
+                    }else if (idZona == 4) {
+                        System.out.println("Municipio da Zona Leste inserido com sucesso!");
+                    }else{
+                        System.out.println("Municipio fora da zona de são paulo inserido com sucesso!");
+                    }
                 } catch (Exception e) {
                     jdbcTemplate.update(
                             "INSERT INTO tblLogArquivos (tipoLog, descricao) VALUES (?, ?)",
