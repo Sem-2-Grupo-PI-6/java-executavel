@@ -432,10 +432,55 @@ public  class LerPersistirDados extends Conexao {
     }
 
     private Integer getZonaId(String municipio) {
-        List<String> zonaLeste = List.of("sao mateus", "itaquera", "penha", "vila prudente", "cidade tiradentes", "sao miguel paulista", "ermelino matarazzo", "tatuape", "aricanduva", "guilhermina esperanca");
-        List<String> zonaSul = List.of("capao redondo", "campo limpo", "jardim angela", "morumbi", "santo amaro", "interlagos", "vila mariana", "vila andrade", "jabaquara", "campo belo", "aguas da prata");
-        List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
-        List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina", "pirituba", "pompeia", "alto da lapa", "sumare");
+        List<String> zonaLeste = List.of(
+                "itaquaquecetuba",
+                "sao bernardo do campo",
+                "sao caetano do sul",
+                "suzano",
+                "maua",
+                "ferraz de vasconcelos",
+                "guarulhos",
+                "poa",
+                "santo andre"
+        );
+
+        List<String> zonaSul = List.of(
+                "diadema",
+                "embu das artes",
+                "embu-guacu",
+                "itabera",
+                "itaquaquecetuba",
+                "miracatu",
+                "santos",
+                "rio grande da serra",
+                "sao vicente",
+                "itabera"
+        );
+
+        List<String> zonaNorte = List.of(
+                "caieiras",
+                "cajamar",
+                "francisco morato",
+                "franco da rocha",
+                "guararema",
+                "mogi das cruzes",
+                "pirapora do bom jesus",
+                "salesopolis",
+                "santo expedito"
+        );
+
+        List<String> zonaOeste = List.of(
+                "aracariguama",
+                "aracoiaba da serra",
+                "barueri",
+                "carapicuiba",
+                "cotia",
+                "jandira",
+                "juquitiba",
+                "miracatu",
+                "osasco",
+                "itabera"
+        );
 
         if (zonaNorte.contains(municipio)) return school.sptech.enumZona.ZONA_NORTE.getIdZona();
         else if (zonaLeste.contains(municipio)) return school.sptech.enumZona.ZONA_LESTE.getIdZona();
