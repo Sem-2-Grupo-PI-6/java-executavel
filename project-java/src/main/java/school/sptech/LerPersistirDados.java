@@ -22,7 +22,7 @@ import java.util.*;
 public  class LerPersistirDados extends Conexao {
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(getConexao());
     private final S3Client s3Client;
-    private List<enumZona> enumZona;
+    private enumZona enumZona;
 
 
     public LerPersistirDados() {
@@ -368,8 +368,7 @@ public  class LerPersistirDados extends Conexao {
                             .replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
                     Integer idZona = getZonaId(municipio);
-//                    if (enumZona.getIdZona() == null || enumZona.getIdZona() == 0) continue;
-                    System.out.println(idZona);
+
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
@@ -438,11 +437,12 @@ public  class LerPersistirDados extends Conexao {
         List<String> zonaNorte = List.of("santana", "tucuruvi", "casa verde", "freguesia do o", "jacana", "brasilandia", "mandaqui", "tremembe", "vila guilherme", "parada inglesa");
         List<String> zonaOeste = List.of("pinheiros", "lapa", "butanta", "barra funda", "perdizes", "vila leopoldina", "pirituba", "pompeia", "alto da lapa", "sumare");
 
-        if (zonaNorte.contains(municipio)) return enumZona.get(0).getIdZona();
-        else if (zonaLeste.contains(municipio)) return enumZona.get(1).getIdZona();
-        else if (zonaSul.contains(municipio)) return enumZona.get(2).getIdZona();
-        else if (zonaOeste.contains(municipio)) return enumZona.get(3).getIdZona();
-        else return enumZona.get(4).getIdZona();
+        if (zonaNorte.contains(municipio)) return school.sptech.enumZona.ZONA_NORTE.getIdZona();
+        else if (zonaLeste.contains(municipio)) return school.sptech.enumZona.ZONA_LESTE.getIdZona();
+        else if (zonaSul.contains(municipio)) return school.sptech.enumZona.ZONA_SUL.getIdZona();
+        else if (zonaOeste.contains(municipio)) return school.sptech.enumZona.ZONA_OESTE.getIdZona();
+        else return school.sptech.enumZona.LITORAL.getIdZona();
+
     }
 
     public void fecharS3() {
