@@ -21,16 +21,12 @@ import java.util.*;
 
 public  class LerPersistirDados extends Conexao {
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(getConexao());
-    private final String bucketName = "s3-sixtech";
-    private final Region region = Region.US_EAST_1;
     private final S3Client s3Client;
     private List<enumZona> enumZona;
 
-    public LerPersistirDados(S3Client s3Client) {
-        this.s3Client = s3Client;
-    }
 
     public LerPersistirDados() {
+        Region region = Region.US_EAST_1;
         this.s3Client = S3Client.builder()
                 .region(region)
                 .credentialsProvider(DefaultCredentialsProvider.create())
@@ -373,6 +369,7 @@ public  class LerPersistirDados extends Conexao {
 
                     Integer idZona = getZonaId(municipio);
 //                    if (enumZona.getIdZona() == null || enumZona.getIdZona() == 0) continue;
+                    System.out.println(idZona);
                     jdbcTemplate.update(
                             "INSERT INTO tblPopulacao (ano, codigoIbge, municipio, qtdPopulacao, homens, mulheres, razaoSexo, idadeMedia, densidadeDemo, tblZona_idZona) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             anoCerto, codigoIbge, municipio, qtdPopulacao, homens, mulheres,
@@ -410,6 +407,7 @@ public  class LerPersistirDados extends Conexao {
     }
 
     private InputStream baixarArquivo(String key) throws IOException {
+        String bucketName = "sixtech-s3";
         System.out.println("Baixando do S3: " + bucketName + "/" + key);
         GetObjectRequest request = GetObjectRequest.builder()
                 .bucket(bucketName)
